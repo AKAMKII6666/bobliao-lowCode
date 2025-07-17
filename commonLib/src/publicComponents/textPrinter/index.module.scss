@@ -1,0 +1,28 @@
+.textPrinter_cursor {
+	display: inline-block;
+	padding: 0px;
+	margin: 0px;
+	opacity: 0.8;
+	width: 0.214286em;
+	height: 0.214286em;
+	background-color: #fff;
+
+	animation: cursorFlash 0.5s;
+	animation-timing-function: ease-in;
+	animation-iteration-count: infinite;
+}
+
+@keyframes cursorFlash {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0;
+	}
+	60% {
+		opacity: 0.8;
+	}
+	100% {
+		opacity: 0.8;
+	}
+}

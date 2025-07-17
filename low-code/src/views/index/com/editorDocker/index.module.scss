@@ -1,0 +1,108 @@
+.outsiderContainer {
+	transition: all 0.3s;
+	position: fixed;
+	bottom: 55px;
+	left: 0;
+	z-index: 200;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.container {
+	overflow: hidden;
+	transition: all 0.3s;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+	margin-left: 23px;
+
+	&:nth-child(1) {
+		margin-left: 0;
+	}
+
+	.containerInsider {
+		height: 55px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		align-content: center;
+		position: relative;
+		.icon {
+			background-repeat: no-repeat;
+			background-size: 100%;
+			background-position: center;
+			width: 33.91px;
+			height: 31px;
+			margin: 0px 12px;
+			cursor: pointer;
+			opacity: 0.6;
+			transition: all 0.3s;
+			position: relative;
+
+			&.selected,
+			&:hover {
+				opacity: 1;
+			}
+		}
+
+		.icon1 {
+			background-image: url(./images/nomoCursor.svg);
+			background-size: 26.93px 27px;
+			background-position: center bottom;
+		}
+		.icon2 {
+			background-image: url(./images/layoutCursor.svg);
+			background-size: 33.91px 31px;
+		}
+		.icon3 {
+			background-image: url(./images/componentCursor.svg);
+			background-size: 31.92px 27px;
+		}
+
+		.selectedFlg {
+			position: absolute;
+			top: 43px;
+			left: 0;
+			width: 6px;
+			height: 6px;
+			background-color: #019376;
+			border-radius: 10px;
+			transition: all 0.3s;
+		}
+
+		.blockIcon {
+			display: inline-block;
+			width: 40px;
+			height: 40px;
+			background-color: transparent;
+			border-radius: 8px;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			align-content: center;
+			transition: all 0.3s;
+			cursor: pointer;
+			margin: 0 10px;
+
+			svg {
+				color: #019376;
+				transition: all 0.3s;
+			}
+
+			&:hover,
+			&.selected {
+				background-color: #019376;
+				svg {
+					color: #fff;
+				}
+			}
+		}
+	}
+}
+
+.tip {
+	background-color: #019376;
+}

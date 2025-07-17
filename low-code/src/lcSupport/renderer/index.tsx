@@ -1,0 +1,822 @@
+/**
+ * 廖力编写
+ * 模块名称：
+ * 模块说明：
+ * 编写时间：
+ */
+
+import React, { createContext, useState, useContext, useEffect, ReactElement, FC, useRef } from "react";
+import useRenderTreeHook from "../renderTreeController/renderTreeHook";
+import { ICommonInqueryitempropsWithoutYup, ITreeNode, TNodeType } from "../interface/ItreeNode";
+import { ComponentNameMap } from "../lcsUtils";
+import { coordXY, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
+import { Immer, produce } from "immer";
+import { newGuid } from "MithalCommonLibrary/utils/utils";
+import useJquery from "@bobliao/use-jquery-hook";
+import { useFormik } from "formik";
+import toast from "react-hot-toast";
+import { IAutoFormItemProps, IAutoFormProps } from "MithalCommonLibrary/AutoForm";
+import { ICommonInqueryprops } from "MithalCommonLibrary/CommonInquery";
+import { MithrilAntdTableComponentProps } from "MithalCommonLibrary/MithrilAntdTable";
+import ErrorBoundary from "../components/ErrorBoundary";
+import useLocalStorage from "use-local-storage";
+import useDebounce from "MithalCommonLibrary/utils/debounceHook";
+import { compileStringAsync } from "sass";
+
+//定义勾子的返回类型
+export type TRendererHookReturnType = ReturnType<typeof useRendererDataHook>;
+
+/* 先定义勾子 */
+export const useRendererDataHook = function () {
+	//===============useHooks=================
+	//scss编译防抖
+	const debounce = useDebounce();
+	//初始化渲染树
+	const renderTreeObj = useRenderTreeHook({});
+	const $ = useJquery();
+
+	//===============state====================
+	const [isMounted, setIsMounted] = useState<boolean>(false);
+	/* 是否打开scss编辑器 */
+	const [isopenScssEditorWindow, setisopenScssEditorWindow] = useState<boolean>(false);
+	/* 当前scss编辑内容 */
+	const [currentScssCode, setcurrentScssCode] = useLocalStorage<string>("_currentPageScssFile_", "");
+	/* 当前需要注入到页面内的css内容(用于预览 ) */
+	const [currentInjectCssContent, setcurrentInjectCssContent] = useState<string>("");
+
+	/* 是否打开属性面板 */
+	const [isOpenPropswindow, setisOpenPropswindow] = useState<boolean>(false);
+	/* 被属性面板打开的节点路径 */
+	const [settingPropsNodePath, setsettingPropsNodePath] = useState<number[]>([]);
+	/* 被属性面板打开的节点的本体 */
+	const [currentSettingNode, setcurrentSettingNode] = useState<ITreeNode | null>(null);
+
+	/* 当前鼠标模式 */
+	const [mouseMode, setMouseMode] = useState<TEditorMode>("layoutEdit");
+
+	/* 当前鼠标动作 */
+	const [mouseAction, setMouseAction] = useState<TMouseAction>("free");
+
+	/* 鼠标移动事件响应时间戳 */
+	const [mouseMoveStamp, setmouseMoveStamp] = useState<number>(-1);
+
+	/* 拖拽开始前的位置 */
+	const [dragBPosition, setdragBPosition] = useState<coordXY>({
+		x: 0,
+		y: 0,
+	});
+
+	/* 拖拽开始时的位置 */
+	const [dragStartPosition, setdragStartPosition] = useState<coordXY>({
+		x: 0,
+		y: 0,
+	});
+	/* 拖拽结束时的位置 */
+	const [dragEndPosition, setdragEndPosition] = useState<coordXY>({
+		x: 0,
+		y: 0,
+	});
+
+	/* 当前鼠标位置 */
+	const [currentMousePosition, setcurrentMousePosition] = useState<coordXY>({
+		x: 0,
+		y: 0,
+	});
+
+	/* 当前正在拖拽的节点 */
+	const [currentDraggingNode, setcurrentDraggingNode] = useState<ITreeNode | null>(null);
+	const [currentDraggingNodePath, setcurrentDraggingNodePath] = useState<number[] | null>(null);
+
+	/* 当前鼠标指向的放置节点 */
+	const [currentDraggingTargetNodePath, setcurrentDraggingTargetNodePath] = useState<number[] | null>(null);
+
+	/* 滚去的高度 */
+	const [rContainerScrollTop, setrContainerScrollTop] = useState<number>(0);
+
+	/* 鼠标是否进入了某个拖拽事件接受层 */
+	const [isEnterWarpper, setisEnterWarpper] = useState<boolean>(false);
+
+	/* 当前激发了菜单的warpper事件接受层 */
+	const [currentMenuNodeObj, setcurrentMenuNodeObj] = useState<warpperDivObj | null>(null);
+
+	/* 当前是否打开了Warpper的右键菜单 */
+	const [isOpenWarpperRightMenu, setisOpenWarpperRightMenu] = useState<boolean>(false);
+
+	/**
+	 * warpperhoverStateUpdateStamp
+	 * warpperhover状态更新指示
+	 */
+	const [warpperhoverStateUpdateStamp, setwarpperhoverStateUpdateStamp] = useState<Number>(-1);
+
+	/* 是否打开了组件篮子 */
+	const [isopenBucket, setisopenBucket] = useState<boolean>(false);
+
+	/* 是否打开了代码窗体 */
+	const [isopenCodeWindow, setisopenCodeWindow] = useState<boolean>(false);
+
+	/* antdtable的假数据 */
+	const [listFakeData, setlistFakeData] = useState<any>([
+		{
+			code: 1,
+			name: "示例名称",
+			value: "200.00",
+			area: "200",
+			landType: "示例土地类型",
+			statusTypeId: "示例利用现状类型",
+			createByTime: "2020-01-01",
+			lastContractor: "test",
+		},
+		{
+			code: 2,
+			name: "示例名称",
+			value: "200.00",
+			area: "200",
+			landType: "示例土地类型",
+			statusTypeId: "示例利用现状类型",
+			createByTime: "2020-01-01",
+			lastContractor: "test",
+		},
+		{
+			code: 3,
+			name: "示例名称",
+			value: "200.00",
+			area: "200",
+			landType: "示例土地类型",
+			statusTypeId: "示例利用现状类型",
+			createByTime: "2020-01-01",
+			lastContractor: "test",
+		},
+		{
+			code: 4,
+			name: "示例名称",
+			value: "200.00",
+			area: "200",
+			landType: "示例土地类型",
+			statusTypeId: "示例利用现状类型",
+			createByTime: "2020-01-01",
+			lastContractor: "test",
+		},
+	]);
+
+	//===============static===================
+
+	//===============formik===================
+	const fakeFormik = useFormik({
+		initialValues: {
+			yesNo_blank: "1",
+			text_blank: "",
+			number_blank: 0,
+			selections_blank: [
+				{
+					label: "测试0",
+					value: "0",
+				},
+				{
+					label: "测试2",
+					value: "1",
+				},
+			],
+			selectionsValue_blank: "",
+			timeStart_blank: "",
+			timeEnd_blank: "",
+			time_blank: "",
+			numberStart_blank: "",
+			numberEnd_blank: "",
+		},
+		onSubmit: () => {
+			toast.success("formik:提交了表单!");
+		},
+	});
+
+	//===============ref======================
+	//当鼠标放在warpper的事件div上时,或者右键选中该div时，或者抓起组件即将放下时，获得的节点路径链上的信息
+	const warpperDivChainRef = useRef<warpperDivObj[]>([]);
+
+	//鼠标位置
+	const mousePositionRef = useRef<coordXY>({
+		x: 0,
+		y: 0,
+	});
+
+	//===============function=================
+	/**
+	 *
+	 * 编辑节点
+	 */
+	const editNodeProps = function (node: ITreeNode, path: number[]) {
+		setisOpenPropswindow(true);
+		setsettingPropsNodePath(path);
+		setcurrentSettingNode(node);
+	};
+
+	/**
+	 * 关闭编辑
+	 */
+	const closePropsEditor = function () {
+		setisOpenPropswindow(false);
+		setsettingPropsNodePath([]);
+		setcurrentSettingNode(null);
+	};
+
+	//拖拽开始事件
+	const onDragStart = function (node: ITreeNode, path: number[] | null, action?: "copy"): void {
+		if (typeof action !== "undefined" && action === "copy") {
+			let newNode = structuredClone(node);
+			newNode.nodeid = "";
+			newNode.isTached = false;
+			setcurrentDraggingNode(newNode);
+			setcurrentDraggingNodePath(null);
+		} else {
+			setcurrentDraggingNode(node);
+			setcurrentDraggingNodePath(path);
+			if (node.nodeid !== "" && node.nodetype === "layout") {
+				//如果当前节点有nodeid，说明目前挂载在编辑器里，先把它移除掉
+				renderTreeObj.deleteNode(path);
+			}
+		}
+		setMouseAction("drag");
+	};
+
+	//拖拽进入事件
+	const onDragEnter = function (path: number[]): void {
+		// 设置当前拖拽目标节点路径
+		setcurrentDraggingTargetNodePath(path);
+		setisEnterWarpper(true);
+	};
+
+	//拖拽移出事件
+	const onDragOut = function (): void {
+		// 设置当前拖拽目标节点路径
+		setcurrentDraggingTargetNodePath(null);
+		setisEnterWarpper(false);
+	};
+
+	//拖拽结束
+	const onDragEnd = function (fleg?: string, position?: coordXY): void {
+		//如果是编辑，直接打开编辑窗口
+		if (fleg === "edit") {
+			setsettingPropsNodePath(currentDraggingNodePath);
+			setcurrentSettingNode(currentDraggingNode);
+			setisOpenPropswindow(true);
+			setdragEndPosition({ ...position });
+			setMouseAction("free");
+			if (currentDraggingNode.nodetype !== "component") {
+				//将节点放回原来的位置;
+				renderTreeObj.insertNodeAt(currentDraggingNode, currentDraggingNodePath);
+			}
+			return;
+		}
+
+		//如果是删除，直接删除
+		if (fleg === "delete") {
+			if (currentDraggingNode.nodetype === "component") {
+				renderTreeObj.deleteNode(currentDraggingNodePath);
+			}
+			setdragEndPosition({ ...position });
+			setMouseAction("free");
+			renderTreeObj.setsaveTreeCommandStamp(Date.now());
+			return;
+		}
+		//操作模式
+		/**
+		 * addNode : 组件的添加
+		 * insert : 布局组件的添加
+		 * swap : 组件的交换
+		 * moveLayout : 布局组件的位置移动
+		 * moveCom : 组件的位置移动
+		 * noset : 没有找到具体的操作方法
+		 */
+		var operationMode: "addNode" | "insert" | "swap" | "moveLayout" | "moveCom" | "noset" = "noset";
+
+		if (currentDraggingTargetNodePath !== null) {
+			let _currentDraggingTargetNodePath = Array.from(currentDraggingTargetNodePath);
+			//处理组件的页面内的拖拽
+			if (currentDraggingNodePath !== null && currentDraggingNode.nodetype === "component" && currentDraggingNode.nodeid !== "") {
+				let _currentDraggingParentNodePath = Array.from(currentDraggingNodePath);
+				let _currentDraggingTargetParentNodePath = Array.from(currentDraggingTargetNodePath);
+				_currentDraggingParentNodePath.pop();
+				_currentDraggingTargetParentNodePath.pop();
+				let _currentDraggingParentNode = renderTreeObj.findNodeByPath(renderTreeObj.renderTree, _currentDraggingParentNodePath);
+
+				let _currentDraggingTargetParentNode = renderTreeObj.findNodeByPath(renderTreeObj.renderTree, _currentDraggingTargetParentNodePath);
+				let _currentDraggingTargettNode = renderTreeObj.findNodeByPath(renderTreeObj.renderTree, currentDraggingTargetNodePath);
+				//如果目标本身就不存在，那么说明目标不是AutoForm / CommonInquery
+
+				//如果当前是将autoform / CommonInquery中的组件拖到一样的autoform / CommonInquery的末尾
+				if (
+					_currentDraggingParentNodePath.join("") === _currentDraggingTargetParentNodePath.join("") &&
+					(_currentDraggingTargetParentNode.name === "AutoForm" || _currentDraggingTargetParentNode.name === "CommonInquery") &&
+					_currentDraggingTargettNode === null
+				) {
+					renderTreeObj.deleteNode(currentDraggingNodePath);
+					operationMode = "addNode"; // 设置为添加模式
+				}
+				if (
+					//
+					_currentDraggingParentNodePath.join("") !== _currentDraggingTargetParentNodePath.join("") &&
+					_currentDraggingTargetParentNode &&
+					_currentDraggingTargetNodePath.join("") !== _currentDraggingParentNodePath.join("") &&
+					(_currentDraggingTargetParentNode.name === "AutoForm" || _currentDraggingTargetParentNode.name === "CommonInquery") &&
+					_currentDraggingTargettNode === null
+				) {
+					//如果当前拖拽的节点的父节点的id和当前目标节点不一致，
+					// 而且当前拖拽节点的nodeid不为空，
+					// 而且当前目标节点的类型为Autofrom，
+					// 而且当前正在拖拽的组件类型为用户控件
+					renderTreeObj.deleteNode(currentDraggingNodePath);
+					operationMode = "addNode"; // 设置为添加模式
+				}
+			}
+			if (currentDraggingNode.nodeid === "") {
+				// 如果当前拖拽节点没有 nodeid，说明是新添加的节点
+				operationMode = "addNode"; // 设置为添加模式
+			}
+
+			if (currentDraggingNode.nodeid !== "" && currentDraggingNode.nodetype === "layout") {
+				// 如果当前拖拽节点是布局类型,且nodeid不为空，说明是移动操作
+				operationMode = "moveLayout"; // 设置为移动模式
+			}
+
+			//如果当前目标节点是一个虚拟的插入节点，节点路径最后一位为浮点数,说明是需要插入,但要确保当前是新加节点不是移动
+			if (
+				(_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1].toString().indexOf(".") !== -1 ||
+					_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1] === -1) &&
+				currentDraggingNode.nodeid === ""
+			) {
+				operationMode = "insert"; // 如果是插入模式
+
+				//如果以上三个判断都没进去过，而且当前拖拽组件的路径不是空（非新组件）那大概率也不是布局组件了，那就是控件的移动才做(可能是交换，或者是移动 )
+			} else if (operationMode === "noset" && currentDraggingNodePath !== null) {
+				let ___currentDraggingTargetNodePath = Array.from(_currentDraggingTargetNodePath);
+				___currentDraggingTargetNodePath.pop();
+				let targetContainer = renderTreeObj.findNodeByPath(renderTreeObj.renderTree, ___currentDraggingTargetNodePath);
+				if (typeof targetContainer.children === "undefined" || targetContainer.children.length === 0) {
+					operationMode = "moveCom";
+				} else {
+					operationMode = "swap";
+				}
+			}
+
+			let _currentDraggingNode = produce(currentDraggingNode, (draft) => {
+				if (draft.nodeid === "") {
+					draft.nodeid = newGuid();
+					draft.isTached = true;
+				}
+				return draft;
+			});
+
+			switch (operationMode) {
+				case "addNode":
+					_currentDraggingTargetNodePath.pop();
+					// 如果是添加模式，直接添加到根节点
+					renderTreeObj.addNode(_currentDraggingTargetNodePath, _currentDraggingNode);
+					break;
+				case "insert":
+					if (_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1] === -1) {
+						_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1] = 0;
+					}
+					// 如果是插入模式，插入到指定路径
+					renderTreeObj.insertNodeAt(_currentDraggingNode, _currentDraggingTargetNodePath);
+					break;
+				case "moveLayout":
+					if (_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1] === -1) {
+						_currentDraggingTargetNodePath[_currentDraggingTargetNodePath.length - 1] = 0;
+					}
+
+					//再将节点插入到指定位置
+					renderTreeObj.insertNodeAt(_currentDraggingNode, _currentDraggingTargetNodePath);
+					break;
+				case "moveCom":
+					let ___currentDraggingTargetNodePath = Array.from(_currentDraggingTargetNodePath);
+					___currentDraggingTargetNodePath.pop();
+					renderTreeObj.deleteNode(currentDraggingNodePath);
+					//再将节点插入到指定位置
+					renderTreeObj.addNode(___currentDraggingTargetNodePath, _currentDraggingNode);
+					break;
+				case "swap":
+					// 如果是交换模式，交换当前拖拽节点和目标节点
+					renderTreeObj.swapNodes(currentDraggingNodePath, _currentDraggingTargetNodePath);
+					break;
+			}
+			setdragEndPosition({ x: currentMousePosition.x - 80, y: currentMousePosition.y - 80 });
+			renderTreeObj.setsaveTreeCommandStamp(Date.now());
+		} else {
+			//没有插入，将节点放回原来的位置
+			setdragEndPosition({ ...dragBPosition });
+			if (currentDraggingNode.nodeid !== "" && currentDraggingNode.nodetype === "layout") {
+				renderTreeObj.insertNodeAt(currentDraggingNode, currentDraggingNodePath);
+			}
+		}
+		setMouseAction("free");
+	};
+
+	/* 
+		临时属性处理器
+		用于在生成组件时，临时给组件绑定一些临时属性用的处理器
+		但是这些属性并不保存至组件树里去,只是在渲染时临时添加进去
+		当再次重新渲染时还会再次过一遍这里的逻辑
+	 */
+	const getNodeTempProps = function (node: ITreeNode, isForEditor?: boolean, handleFunction?: (node: ITreeNode, name: string) => any) {
+		let newProps: any = null;
+		//如果不是给编辑器的渲染方式
+		//那就填充默认可用的参数即可
+		if (typeof isForEditor === "undefined" || isForEditor === false) {
+			if (node.nodetype === "layout" && node.name === "AutoForm") {
+				let cProps: IAutoFormProps = structuredClone(node.props) as IAutoFormProps;
+				cProps.formik = fakeFormik;
+				/* 给autoForm转换组件列表 */
+				cProps.items = (function () {
+					let autoformItems: IAutoFormItemProps[] = [];
+					if (node.children.length !== 0) {
+						/* 处理每个子组件 */
+						for (let item of node.children) {
+							//给每个子组件填充autoform的项目的属性
+							let resitem: any = {
+								...{
+									//组件类型
+									comType: item.name as any,
+									//显示标题
+									label: item.label,
+									//组件自身自己的属性
+									comProps: item.props,
+								},
+								//填充其它autoform的子项目的属性
+								...item.autoFormItemProps,
+							};
+
+							autoformItems.push(resitem);
+						}
+					}
+					return autoformItems;
+				})();
+				newProps = cProps;
+			}
+			if (node.nodetype === "layout" && node.name === "CommonInquery") {
+				let cProps: ICommonInqueryprops = structuredClone(node.props) as ICommonInqueryprops;
+				cProps.onSubmit = function () {
+					toast.success("点击了提交!");
+				};
+				cProps.onReset = function () {
+					toast.success("点击了重设!");
+				};
+				/* 给CommonInquery转换组件列表 */
+				cProps.items = (function () {
+					let commonInqueryItems: ICommonInqueryitempropsWithoutYup[] = [];
+					if (node.children.length !== 0) {
+						/* 处理每个子组件 */
+						for (let item of node.children) {
+							//给每个子组件填充commonInquery的项目的属性
+							let resitem: any = {
+								...{
+									//组件类型
+									comType: item.name as any,
+									//显示标题
+									label: item.label,
+									//组件自身自己的属性
+									comProps: item.props,
+								},
+								//填充其它commonInquery的子项目的属性
+								...item.commonInqueryItemProps,
+							};
+
+							commonInqueryItems.push(resitem);
+						}
+					}
+					return commonInqueryItems;
+				})();
+				newProps = cProps;
+			}
+		} else {
+			//否则给编辑器做一些特殊处理处理
+			newProps = handleFunction(node, node.name);
+		}
+
+		if (node.nodetype === "component" && node.name === "MithrilAntdTable") {
+			let cProps: MithrilAntdTableComponentProps = structuredClone(node.props) as MithrilAntdTableComponentProps;
+			cProps.dataSource = listFakeData;
+			cProps.rowKey = (record: any) => record.code;
+			newProps = cProps;
+		}
+
+		if (newProps === null) {
+			return node.props;
+		}
+		return newProps;
+	};
+
+	//渲染编辑器的可视元素
+	const renderEditorElements = function (root: ITreeNode): ReactElement {
+		// 每一项：当前节点 + 用于挂载其 element 的父级 children 数组
+		const stack: {
+			node: ITreeNode;
+			parentChildren: ReactElement[];
+		}[] = [];
+
+		// 用于承接最终返回的 React 树
+		const resultElementContainer: ReactElement[] = [];
+
+		// 初始化压栈，根节点挂到 resultElementContainer 上
+		stack.push({
+			node: root,
+			parentChildren: resultElementContainer,
+		});
+
+		while (stack.length > 0) {
+			const { node, parentChildren } = stack.pop()!;
+
+			// 准备挂载子元素的容器
+			let childrenElements: ReactElement[] | null = [];
+
+			if (typeof node.children === "undefined") {
+				childrenElements = null;
+			}
+
+			// 创建当前节点对应的 ReactElement
+			const Component = ComponentNameMap[node.name] || "div";
+			const element = (
+				<ErrorBoundary renderStamp={renderTreeObj.updaterenderTreeStamp}>
+					{React.createElement(Component, { key: node.nodeid, ...getNodeTempProps(node) }, childrenElements)}
+				</ErrorBoundary>
+			);
+
+			// 挂到父级的 children 中
+			parentChildren.push(element);
+
+			// 如果当前节点有子节点，把它们压栈，挂到 childrenElements 上
+			if (node.children && node.children.length > 0) {
+				for (let i = node.children.length - 1; i >= 0; i--) {
+					stack.push({
+						node: node.children[i],
+						parentChildren: childrenElements,
+					});
+				}
+			}
+		}
+
+		// 返回根节点（resultElementContainer 只包含一个元素）
+		return resultElementContainer[0];
+	};
+
+	/* 全局快捷键处理器 */
+	const globalSnapshotHandler = (e: KeyboardEvent) => {
+		if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+			toast.success("保存完成！");
+			renderTreeObj.emitAndSaveTree();
+			e.preventDefault();
+		}
+
+		if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+			toast.success("已经还原!");
+			renderTreeObj.undo();
+			e.preventDefault();
+		}
+		if ((e.metaKey || e.ctrlKey) && e.key === "y") {
+			toast.success("已经重做!");
+			renderTreeObj.redo();
+			e.preventDefault();
+		}
+		if ((e.metaKey || e.ctrlKey) && e.key === "1") {
+			setMouseMode("none");
+			toast.success(`已切换为预览模式!`);
+			e.preventDefault();
+		}
+		if ((e.metaKey || e.ctrlKey) && e.key === "2") {
+			setMouseMode("layoutEdit");
+			toast.success(`已切换为布局编辑模式!`);
+			e.preventDefault();
+		}
+		if ((e.metaKey || e.ctrlKey) && e.key === "3") {
+			setMouseMode("componentEdit");
+			toast.success(`已切换为用户控件编辑模式!`);
+			e.preventDefault();
+		}
+	};
+	const regestMouseMoveEvent = function (_e) {
+		let xy: coordXY = {
+			x: _e.clientX,
+			y: _e.clientY,
+		};
+
+		mousePositionRef.current = xy;
+		setmouseMoveStamp(+new Date());
+	};
+
+	const getCurrentMousePosition = function () {
+		//在预览模式下停止鼠标的状态更新
+		if (mouseMode !== "none") {
+			setcurrentMousePosition(mousePositionRef.current);
+		}
+	};
+
+	const scsscompile = function () {
+		compileStringAsync(`.bobliao_lc_editor_main_content_root{
+				${currentScssCode}
+			}`)
+			.then((result) => {
+				setcurrentInjectCssContent(result.css);
+			})
+			.catch(function (_e) {
+				toast.error("SCSS编译错误:", _e.message);
+			});
+	};
+
+	//===============effects==================
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			if (isMounted === false) {
+				setIsMounted(true);
+				$(window).bind("mousemove", regestMouseMoveEvent);
+				window.addEventListener("keydown", globalSnapshotHandler);
+			}
+		},
+		[isMounted]
+	);
+
+	useEffect(function (): ReturnType<React.EffectCallback> {
+		return function (): void {
+			setIsMounted(false);
+			$(window).unbind("mousemove", regestMouseMoveEvent);
+			window.removeEventListener("keydown", globalSnapshotHandler);
+		};
+	}, []);
+
+	//每次树更新就重设一下warpperDivChainRef
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			warpperDivChainRef.current = [];
+		},
+		[renderTreeObj.updaterenderTreeStamp]
+	);
+
+	//
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			getCurrentMousePosition();
+		},
+		[mouseMoveStamp]
+	);
+
+	//
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			if (isMounted) {
+				debounce(scsscompile, 2000);
+			}
+		},
+		[currentScssCode, isMounted]
+	);
+	return {
+		//是否挂载
+		isMounted,
+		//渲染树对象
+		renderTreeObj,
+		//渲染编辑器的可视元素
+		renderEditorElements,
+		//当前鼠标模式
+		mouseMode,
+		//设置当前鼠标模式
+		setMouseMode,
+		//当前鼠标动作
+		mouseAction,
+		//设置当前鼠标动作
+		setMouseAction,
+		//当前正在拖拽的节点
+		currentDraggingNode,
+		//设置当前正在拖拽的节点
+		setcurrentDraggingNode,
+		//拖拽开始事件
+		onDragStart,
+		//拖拽进入事件
+		onDragEnter,
+		//拖拽移出事件
+		onDragOut,
+		//拖拽结束
+		onDragEnd,
+		//当前鼠标位置
+		currentMousePosition,
+		//拖放开始前的位置
+		dragBPosition,
+		setdragBPosition,
+		//拖拽开始的位置
+		dragStartPosition,
+		setdragStartPosition,
+		//拖拽结束的位置
+		dragEndPosition,
+		setdragEndPosition,
+		//滚去的高度
+		rContainerScrollTop,
+		setrContainerScrollTop,
+		//当前鼠标指向的目标节点
+		currentDraggingTargetNodePath,
+		//warpperhover更新状态指示
+		warpperhoverStateUpdateStamp,
+		setwarpperhoverStateUpdateStamp,
+		//鼠标是否进入了某个事件接受层
+		isEnterWarpper,
+		setisEnterWarpper,
+		//当前路径链
+		warpperDivChainRef,
+		/* 当前激发了菜单的warpper事件接受层 */
+		currentMenuNodeObj,
+		setcurrentMenuNodeObj,
+		/* 当前是否打开了Warpper的右键菜单 */
+		isOpenWarpperRightMenu,
+		setisOpenWarpperRightMenu,
+		/* 用于布局时临时绑定数据用的formik */
+		fakeFormik,
+		/* 临时属性处理器 */
+		getNodeTempProps,
+		//是否打开组件栏
+		isopenBucket,
+		setisopenBucket,
+		/* antdTable的假数据 */
+		listFakeData,
+		setlistFakeData,
+		/* 是否打开了代码生成窗体 */
+		isopenCodeWindow,
+		setisopenCodeWindow,
+		/* 是否打开属性面板 */
+		isOpenPropswindow,
+		setisOpenPropswindow,
+		/* 被属性面板打开的节点路径 */
+		settingPropsNodePath,
+		setsettingPropsNodePath,
+		/* 被属性面板打开的节点的本体 */
+		currentSettingNode,
+		setcurrentSettingNode,
+		/* 编辑节点 */
+		editNodeProps,
+		/* 关闭属性编辑 */
+		closePropsEditor,
+		/* 是否打开scss编辑器 */
+		isopenScssEditorWindow,
+		setisopenScssEditorWindow,
+		/* 当前scss编辑内容 */
+		currentScssCode,
+		setcurrentScssCode,
+		/* 当前需要注入到页面内的css内容(用于预览 ) */
+		currentInjectCssContent,
+		setcurrentInjectCssContent,
+	};
+};
+
+/**
+ * 创建一个需要全局使用的context
+ **/
+export const RendererDataContext = createContext<TRendererHookReturnType>({} as unknown as TRendererHookReturnType);
+
+/**
+ * 给子节点使用的context
+ * @returns
+ */
+export const useRendererDataContext = function (): TRendererHookReturnType {
+	return useContext(RendererDataContext);
+};
+
+/**
+ * 传入参数
+ */
+export interface IRendererDataProviderProps {
+	children: ReactElement | ReactElement[] | undefined | null;
+}
+
+/**
+ * 数据提供器
+ */
+const DARendererDataProviderLayout: FC<IRendererDataProviderProps> = ({ children }, _ref): ReactElement => {
+	//===============useHooks=================
+	let RendererData = useRendererDataHook();
+
+	//===============state====================
+	const [isMounted, setIsMounted] = useState<boolean>(false);
+
+	//===============static===================
+
+	//===============ref======================
+
+	//===============function=================
+
+	//===============effects==================
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			if (isMounted === false) {
+				setIsMounted(true);
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[isMounted]
+	);
+
+	useEffect(function (): ReturnType<React.EffectCallback> {
+		return function (): void {
+			setIsMounted(false);
+		};
+	}, []);
+
+	return (
+		<>
+			<RendererDataContext.Provider value={RendererData}>{children}</RendererDataContext.Provider>
+		</>
+	);
+};
+export default DARendererDataProviderLayout;

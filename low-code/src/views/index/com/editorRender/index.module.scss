@@ -1,0 +1,20 @@
+.container {
+	padding: 1px;
+	box-sizing: border-box;
+	background-color: rgb(245, 246, 249);
+	min-height: 100vh;
+
+	&.dragging {
+		padding: 16px;
+	}
+}
+
+.rightMenuBackCover {
+	background: rgba(0, 0, 0, 0);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 99;
+}

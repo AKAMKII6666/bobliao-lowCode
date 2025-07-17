@@ -1,0 +1,38 @@
+.header {
+	height: 53px;
+	line-height: 53px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+
+	.item {
+		justify-content: flex-start;
+		display: flex;
+		align-items: center;
+		align-content: center;
+		height: 53px;
+		line-height: 53px;
+		cursor: pointer;
+		border-bottom: 3px solid #454545;
+		box-sizing: border-box;
+		padding: 0 20px;
+		&.selected {
+			border-bottom: 5px solid #13055e;
+		}
+
+		span,
+		svg {
+			display: inline-block;
+			margin-right: 10px;
+		}
+	}
+}
+
+.codeContainer {
+	height: 100%;
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-template-rows: 100%;
+}

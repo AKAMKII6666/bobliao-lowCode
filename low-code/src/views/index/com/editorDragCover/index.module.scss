@@ -1,0 +1,40 @@
+.coverlayer {
+	position: fixed;
+	z-index: 98;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: none;
+	background-color: rgba(0, 0, 0, 0);
+	user-select: none;
+
+	&.show {
+		display: block;
+	}
+}
+
+.dragingItem {
+	overflow: hidden;
+	position: fixed;
+	z-index: 100;
+
+	top: 0;
+	left: 0;
+	opacity: 1;
+	transition: all 0.3s;
+	transform: scale(0);
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+	background-color: #fff;
+	border-radius: 8px;
+	&.show {
+		transition: none;
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	&.showing {
+		transition: all 0.4s;
+		opacity: 1;
+	}
+}

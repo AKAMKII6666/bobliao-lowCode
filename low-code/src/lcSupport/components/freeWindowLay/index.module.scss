@@ -1,0 +1,73 @@
+.background {
+	background: rgba(0, 0, 0, 0);
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: fixed;
+	z-index: 201;
+}
+
+.freeWindow {
+	position: fixed;
+	border-radius: 4px;
+	border: 1px solid #d2d2d2;
+	min-width: 150px;
+	background-color: #f7f7f7;
+	z-index: 202;
+	overflow: hidden;
+	min-height: 300px;
+	min-width: 300px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+
+	.title {
+		height: 30px;
+		display: flex;
+		justify-content: space-between;
+		flex-direction: row;
+		align-items: center;
+		align-content: center;
+		padding: 0 10px;
+		font-size: 12px;
+		font-weight: bold;
+		border-bottom: 1px solid #d2d2d2;
+		color: #000000;
+		cursor: move;
+		.closecontainer {
+			height: 30px;
+			display: flex;
+			justify-content: space-between;
+			flex-direction: row;
+			align-items: center;
+			align-content: center;
+			svg {
+				margin-right: 0;
+				margin-left: auto;
+				cursor: pointer;
+				color: #828282;
+			}
+		}
+	}
+	.content {
+		overflow: hidden;
+		overflow-y: auto;
+		height: calc(100% - 30px);
+		flex-grow: 1;
+		position: relative;
+	}
+}
+
+.resizeBar {
+	position: fixed;
+	background-color: #000;
+	z-index: 203;
+	opacity: 0;
+}
+
+.tin {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

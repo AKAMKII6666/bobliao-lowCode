@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "esnext",
+		"lib": ["dom", "es2021", "esnext"],
+		"declaration": true,
+		"declarationMap": true,
+		"jsx": "react-jsx",
+		"strict": false,
+		"pretty": true,
+		"sourceMap": true,
+		"baseUrl": ".",
+		"forceConsistentCasingInFileNames": false,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"paths": {
+			// 设置别名
+			"MithalCommonLibrary/*": ["./src/publicComponents/*"],
+			"renderer/*": ["./src/*"],
+			"@/*": ["./src/*"],
+			"~/*": ["./src/*"],
+			"*": ["./src/*"]
+		}
+	},
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/dev-hotloader.ts", "global.d.ts"],
+	"exclude": ["node_modules", "node_modules/*/**", "dist", "src/types/overrides"]
+}

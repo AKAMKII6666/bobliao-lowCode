@@ -1,0 +1,164 @@
+.container {
+	&.oc,
+	&.oc_array {
+		border-left: 1px solid #cb6466;
+		margin-left: 5px;
+		.bigInput {
+			border-color: #cb6466;
+		}
+		.eitemsContainer {
+			margin-left: 5px;
+		}
+	}
+
+	&.oc_array {
+		border-left: 1px dashed #8864cb;
+		.bigInput {
+			border-color: #8864cb;
+		}
+	}
+}
+.bigInput {
+	width: 100%;
+	height: 22px;
+	line-height: 22px;
+	background-color: #fff;
+	border: 0;
+	border-top: 1px solid #d2d2d2;
+	border-bottom: 1px solid #d2d2d2;
+	caret-color: #000 !important;
+	padding: 0 10px;
+	outline: 0px;
+
+	&.placeholder {
+		position: relative;
+		&::before {
+			content: "在此键入属性名称-点击Enter以确认输入";
+			position: absolute;
+			color: #e2e2e2;
+		}
+	}
+}
+
+.editorItem {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	align-content: flex-start;
+
+	&:hover {
+		background-color: #1f18690a;
+	}
+
+	.keyStyle {
+		color: #0f0537;
+		font-weight: 500;
+		height: 20px;
+		line-height: 20px;
+	}
+	.valueStyle {
+		height: 20px;
+		line-height: 20px;
+	}
+	span {
+		font-size: 12px;
+		display: inline-block;
+		height: 20px;
+		line-height: 20px;
+		margin: 0px 4px 0px 0px;
+	}
+
+	label {
+		font-size: 12px;
+		display: inline-block;
+		height: 20px;
+		line-height: 20px;
+		margin: 0px 4px;
+		color: #8864cb !important;
+		font-weight: bold;
+	}
+
+	.childContainer {
+		margin-left: 0;
+		margin-right: 0;
+		flex-grow: 1;
+		line-height: 20px;
+		.con {
+			height: 20px;
+			line-height: 20px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			align-content: center;
+			[class*="completeDiv"] {
+				margin-top: 40px;
+			}
+			a {
+				font-size: 10px;
+				text-decoration: underline;
+				color: #0b0997;
+				display: inline-block;
+				margin-left: 10px;
+				cursor: pointer;
+				&:hover {
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}
+.objIcon,
+.arrayIcon {
+	font-size: 12px;
+	height: 20px;
+	line-height: 20px;
+	color: #cb6466;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+
+	.spanClose,
+	.spanJsonEditor {
+		display: inline-block;
+		content: "r";
+		font-family: "webdings";
+		cursor: pointer;
+		width: 15px;
+		height: 15px;
+		line-height: 15px;
+		text-align: center;
+		color: #fff;
+		font-size: 9px;
+		font-weight: lighter;
+		background-color: #0000005b;
+		border-radius: 15px;
+		margin-left: auto;
+		margin-right: 10px;
+	}
+
+	.spanJsonEditor {
+		background-color: #a45c18c7;
+		margin-left: 10px;
+		margin-right: auto;
+	}
+}
+
+.arrayIcon {
+	color: #8864cb;
+}
+.red {
+	color: #cb6466 !important;
+	font-weight: bold;
+}
+.blue {
+	color: #8864cb !important;
+	font-weight: bold;
+}
+.itemkeyComplete {
+	margin-top: 20px;
+}
+
+.itemvalueComplete {
+	margin-top: -8px;
+}

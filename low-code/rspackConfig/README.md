@@ -1,0 +1,5 @@
+# RSPack配置
+该配置能运行，但是因为rspack加mf有些小bug故暂时处于废案状态。
+
+bug症状:
+rspack加mf加动态组件lazyImport加懒编译出现远程组件库组件未定义的错误，这本身是rspack的问题。

@@ -1,0 +1,327 @@
+.eventWarpper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: #0004ff0c;
+	border: 1px dashed #1b1eabcf;
+	box-sizing: border-box;
+	cursor: pointer;
+	opacity: 0.3;
+	/* transition: all 0.1s ease-in-out; */
+	border-radius: 8px;
+	z-index: 97;
+
+	.layerTitle {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 15px;
+		line-height: 15px;
+		background-color: #1b1dabe3;
+		border-radius: 3px 3px 0 0;
+		font-size: 10px;
+		color: #fff;
+		padding: 0 3px;
+		z-index: 97;
+		opacity: 0;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&:hover,
+	&.dragHover {
+		border-radius: 0 8px 8px 8px;
+		opacity: 1;
+		border: 2px solid #1b1eabcf;
+
+		.layerTitle {
+			opacity: 1;
+			transform: translate(0, -14px);
+		}
+	}
+
+	&.fakeHover {
+		border-radius: 0 8px 8px 8px;
+		opacity: 1;
+		border: 2px dashed #1b1dab4a;
+		background-color: #0004ff04;
+		.layerTitle {
+			opacity: 1;
+			transform: translate(0, -14px);
+		}
+	}
+
+	&.layoutDrag {
+		border-radius: 0 8px 8px 8px;
+		opacity: 0.6;
+		border: 1px dashed #1b1dab86;
+		background-color: #0004ff04;
+	}
+
+	&.showMenu {
+		z-index: 97;
+		opacity: 1;
+		background-color: transparent;
+		border: 2px solid #99b617;
+		.layerTitle {
+			background-color: #99b617;
+			opacity: 1;
+			display: block;
+			transform: translate(0, 0);
+			height: 20px;
+			line-height: 20px;
+			font-size: 12px;
+			border-radius: 0 0 4px 4px;
+			transition: all 0.3s;
+		}
+	}
+}
+
+/* 小菜单 */
+.warpperMenu {
+	background-color: #99b617;
+	padding: 4px;
+	position: absolute;
+	z-index: 100;
+	border-radius: 0px 0px 8px 0px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+	margin-top: 0px;
+
+	.icon {
+		width: 23px;
+		height: 23px;
+		background-repeat: no-repeat;
+		background-size: 20px 20px;
+		background-repeat: no-repeat;
+		background-position: center;
+		cursor: pointer;
+		transition: all 0.3s;
+
+		&:hover {
+			scale: 1.1;
+		}
+
+		&:active {
+			scale: 0.9;
+		}
+
+		&.icon1 {
+			background-image: url(./images/Keyboard_double_arrow_up.svg);
+		}
+		&.icon2 {
+			background-image: url(./images/Drag.svg);
+		}
+		&.icon3 {
+			background-image: url(./images/Remove.svg);
+		}
+		&.icon4 {
+			background-image: url(./images/Settings.svg);
+		}
+		&.icon5 {
+			background-image: url(./images/copy.svg);
+			background-size: 65%;
+		}
+		&.icon6 {
+			background-image: url(./images/plusone.svg);
+			background-size: 65%;
+		}
+	}
+	span {
+		width: 19px;
+		height: 1px;
+		display: inline-block;
+		background-color: #fff;
+		margin: 8px 0;
+	}
+}
+
+.layoutReciver {
+	user-select: none;
+	min-width: 0px;
+	min-height: 0px;
+	position: relative;
+	box-sizing: border-box;
+	z-index: 99;
+	border-top: 2px dashed #1bab52af;
+	/* transition: all 0.1s ease-in-out; */
+	opacity: 0;
+	display: none;
+	margin: 10px;
+	border-radius: 0px;
+	font-size: 0px;
+	padding: 0px;
+	/* span {
+		transition: all 0.1s;
+	} */
+
+	&.show {
+		min-width: 200px;
+		height: 20px;
+		opacity: 1;
+		display: flex;
+		flex-direction: row;
+		justify-content: left;
+		align-items: center;
+		align-content: center;
+		background-color: transparent;
+
+		span {
+			position: absolute;
+			font-size: 12px;
+			height: 20px;
+			width: 20px;
+			line-height: 20px;
+			color: #fff;
+			display: inline-block;
+			background-color: #1bab52;
+			margin-left: -20px;
+			overflow: hidden;
+			text-align: center;
+			border-radius: 20px 0 20px 20px;
+		}
+	}
+
+	&:hover {
+		height: unset;
+		min-height: 30px;
+		border-radius: 8px;
+		opacity: 1;
+		border: 2px solid #0a7935fc;
+		background-color: #b1d3be5b;
+		padding: 5px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		align-content: center;
+
+		span {
+			width: unset;
+			position: unset;
+			font-size: 12px;
+			height: unset;
+			line-height: unset;
+			color: #1bab52;
+			display: inline-block;
+			background-color: unset;
+		}
+	}
+}
+
+.tpaaaaaaaaaaaaaa {
+	background-color: #99b617 !important;
+}
+
+.tipautofrom {
+	background-color: #790a6e !important;
+}
+
+.componentnodeShell {
+	overflow: hidden;
+	display: inline-block;
+}
+
+/* 用于接受组件的事件响应层 */
+.componentReciverLay {
+	position: absolute;
+	z-index: 99;
+	border: 2px dashed #0a7935fc;
+	background-color: #b1d3be5b;
+	border-radius: 8px;
+	&:hover {
+		border: 2px solid #0a7935;
+		background-color: #b1d3be7a;
+	}
+}
+/* 自动表单布局组件用的事件接受层的样式 */
+.autoformItemReciverLay {
+	position: absolute;
+	z-index: 100;
+	border: 2px dashed #790a6e09;
+	background-color: #d3b1cc05;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	transition: all 0.3s;
+	label,
+	span {
+		display: inline-block;
+		background-color: #790a6efc;
+		padding: 3px 6px;
+		border-radius: 8px;
+		color: #fff;
+		transition: all 0.3s;
+		position: absolute;
+	}
+	label {
+		transform: scale(0);
+	}
+	span {
+		opacity: 0.5;
+		color: #790a6e;
+		background-color: transparent;
+		border: 0.5px solid #790a6efc;
+		transform: scale(1);
+	}
+	&:hover {
+		border: 2px solid #790a6efc;
+		background-color: #d3b1cc5b;
+		label {
+			transform: scale(1);
+		}
+		span {
+			transform: scale(0);
+		}
+
+		.delete {
+			opacity: 1;
+			transform: scale(1);
+			&:hover {
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
+				transform: scale(1.1);
+			}
+			&:active {
+				box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.6);
+				transform: scale(0.9);
+			}
+		}
+	}
+
+	.delete {
+		width: 25px;
+		height: 25px;
+		line-height: 23px;
+		background-color: #952222;
+		color: #fff;
+		border-radius: 25px;
+		position: absolute;
+		text-align: center;
+		font-size: 30px;
+		align-self: flex-end;
+		margin-right: -17px;
+		margin-top: -17px;
+		cursor: pointer;
+		opacity: 0;
+		transition: all 0.3s;
+		transform: scale(0);
+		border: 1px solid #fff;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+		box-sizing: border-box;
+		&:hover {
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
+			transform: scale(1.1);
+		}
+		&:active {
+			box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.6);
+			transform: scale(0.9);
+		}
+	}
+}

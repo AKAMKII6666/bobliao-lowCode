@@ -1,0 +1,28 @@
+.expand {
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+	label {
+		display: inline-block;
+		background-image: url(https://mithril-trinity.oss-cn-beijing.aliyuncs.com/swythtml/imgs/Arrow_down_inquery.svg);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 22px;
+		width: 22px;
+		height: 22px;
+		line-height: 22px;
+		transition: all 0.3s;
+		cursor: pointer;
+		transform: rotateZ(180deg);
+		margin-top: -11px;
+
+		&.fold {
+			transform: rotateZ(0deg);
+		}
+	}
+}
+.divder {
+	height: 1px;
+	overflow: hidden;
+	background-color: #f2f2f2;
+}

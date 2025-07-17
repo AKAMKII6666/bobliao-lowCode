@@ -1,0 +1,17 @@
+* {
+	user-select: none;
+	-webkit-user-drag: none;
+}
+html,
+body {
+	overflow: hidden;
+	height: unset !important;
+}
+
+html {
+	overflow-y: auto;
+}
+
+#root {
+	height: unset !important;
+}

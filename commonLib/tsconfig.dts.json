@@ -1,0 +1,19 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		// 开启声明输出，仅输出 .d.ts
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		// 跳过所有库声明文件的校验
+		"skipLibCheck": true,
+		// 支持 JSX 和 DOM，避免找不到 JSX/HTMLElement
+		"jsx": "react-jsx",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		// 输出到 @mf-types 目录（与 generateTypes.typesFolder 保持一致）
+		"outDir": "./@mf-types"
+	},
+	// 只包含你的源码目录，彻底不看第三方
+	"include": ["src/**/*"],
+	// 排除 overrides，和 node_modules
+	"exclude": ["node_modules", "src/types/overrides/**/*"]
+}
