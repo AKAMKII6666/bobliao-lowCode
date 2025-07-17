@@ -590,6 +590,21 @@ export const useRendererDataHook = function () {
 			toast.success(`已切换为用户控件编辑模式!`);
 			e.preventDefault();
 		}
+		if ((e.metaKey || (e.ctrlKey && e.altKey)) && e.key === "s") {
+			setisopenScssEditorWindow(true);
+			toast.success(`已经打开Scss编辑器`);
+			e.preventDefault();
+		}
+		if ((e.metaKey || (e.ctrlKey && e.altKey)) && e.key === "c") {
+			setisopenScssEditorWindow(true);
+			toast.success(`已经打开代码生成面板`);
+			e.preventDefault();
+		}
+		if ((e.metaKey || (e.ctrlKey && e.altKey)) && e.key === "i") {
+			setisopenScssEditorWindow(true);
+			toast.success(`已经打开组件/控件列表`);
+			e.preventDefault();
+		}
 	};
 	const regestMouseMoveEvent = function (_e) {
 		let xy: coordXY = {
