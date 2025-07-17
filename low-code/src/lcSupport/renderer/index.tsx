@@ -596,12 +596,12 @@ export const useRendererDataHook = function () {
 			e.preventDefault();
 		}
 		if ((e.metaKey || (e.ctrlKey && e.altKey)) && e.key === "c") {
-			setisopenScssEditorWindow(true);
+			setisopenCodeWindow(true);
 			toast.success(`已经打开代码生成面板`);
 			e.preventDefault();
 		}
 		if ((e.metaKey || (e.ctrlKey && e.altKey)) && e.key === "i") {
-			setisopenScssEditorWindow(true);
+			setisopenBucket(true);
 			toast.success(`已经打开组件/控件列表`);
 			e.preventDefault();
 		}

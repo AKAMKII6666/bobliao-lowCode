@@ -563,7 +563,13 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * 将当前的 renderTree 保存到 savetree 中
 	 * 并将当前的 renderTree 历史记录保存到 history 中
 	 */
-	const emitAndSaveTree = (): void => {
+	const emitAndSaveTree = async (): Promise<void> => {
+		let renderTree: any = await new Promise(function (_res) {
+			setrenderTree((renderTree) => {
+				_res(renderTree);
+				return renderTree;
+			});
+		});
 		// 添加历史记录
 		setHistory((prevHistory) => {
 			const newHistory = [...prevHistory, structuredClone(renderTree)];
@@ -907,7 +913,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	/**
 	 * 格式化当前配置
 	 */
-	const formatconfig = async (config: any): Promise<string> => {
+	const formatconfig = (config: any): string => {
 		return JSON.stringify(config, null, 4);
 	};
 
@@ -925,7 +931,13 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * 生成整个渲染树的配置
 	 */
 	const generateTreeConfig = async (): Promise<string> => {
-		return await formatconfig(savetree);
+		let _savetree = await new Promise(function (_res) {
+			setsavetree(function (_v) {
+				_res(_v);
+				return _v;
+			});
+		});
+		return formatconfig(_savetree);
 	};
 
 	//===============effects==================

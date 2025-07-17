@@ -36,17 +36,17 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 	//===============static===================
 	const buttonGroup = [
 		{
-			name: "预览操作模式",
+			name: "预览操作模式 (Ctrl+1)",
 			icon: styles.icon1,
 			mode: "none",
 		},
 		{
-			name: "布局编辑模式",
+			name: "布局编辑模式 (Ctrl+2)",
 			icon: styles.icon2,
 			mode: "layoutEdit",
 		},
 		{
-			name: "组件编辑模式",
+			name: "组件编辑模式 (Ctrl+3)",
 			icon: styles.icon3,
 			mode: "componentEdit",
 		},
@@ -211,7 +211,7 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 							return (
 								<>
 									<Tooltip
-										title={rendererData.mouseMode === "componentEdit" ? "用户控件列表" : "布局组件列表"}
+										title={rendererData.mouseMode === "componentEdit" ? "用户控件列表 (Ctrl+Alt+i)" : "布局组件列表 (Ctrl+Alt+i)"}
 										classes={{
 											tooltip: styles.tip,
 										}}
@@ -246,7 +246,7 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 
 						{/* Scss编辑按钮 */}
 						<Tooltip
-							title={"Scss编辑"}
+							title={"Scss编辑 (Ctrl+Alt+s)"}
 							classes={{
 								tooltip: styles.tip,
 							}}
@@ -273,7 +273,7 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 
 						{/* 代码生成打开按钮 */}
 						<Tooltip
-							title={"代码生成"}
+							title={"代码生成 (Ctrl+Alt+c)"}
 							classes={{
 								tooltip: styles.tip,
 							}}

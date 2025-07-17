@@ -6,7 +6,7 @@
     "type": "app",
     "buildInfo": {
       "buildVersion": "1.0.0",
-      "buildName": "low-code-test"
+      "buildName": "low-code"
     },
     "remoteEntry": {
       "name": "",
