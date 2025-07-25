@@ -92,7 +92,7 @@
 			align-items: center;
 			align-content: center;
 			[class*="completeDiv"] {
-				margin-top: 40px;
+				margin-top: 108px;
 			}
 			a {
 				font-size: 10px;
@@ -116,6 +116,7 @@
 	color: #cb6466;
 	font-weight: bold;
 	display: flex;
+	justify-content: flex-start;
 	align-items: center;
 
 	.spanClose,

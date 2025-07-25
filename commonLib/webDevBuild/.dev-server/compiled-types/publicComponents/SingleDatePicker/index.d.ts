@@ -10,14 +10,41 @@
  *
  * 编写时间：2025-05-13 17:40:27 星期二
  */
-import { FC } from "react";
+import React, { FC } from "react";
 import { DatePickerProps } from "@mui/x-date-pickers";
 import "dayjs/locale/zh-cn";
 import { Dayjs } from "dayjs";
+import { SxProps, Theme } from "@mui/material";
 /**
  * 传入参数
  */
 export interface ISingleDatePickerProps extends Omit<DatePickerProps<Dayjs>, "placeHolder" | "placeholder"> {
+    /**
+     * 左侧标签文本或自定义节点
+     */
+    label?: React.ReactNode | string;
+    /**
+     * 左侧标签宽度（单位默认为 px），不传则自适应内容宽度
+     */
+    labelWidth?: number;
+    /**
+     * 包裹内容的 Stack 组件的额外样式，使用 MUI 的 sx 语法
+     */
+    stackSx?: SxProps<Theme>;
+    /**
+     * 布局方向，可选 "row" 或 "column"，决定标签与输入框的排列方式，默认为 "row"
+     */
+    direction?: any;
+    /**
+     * 标签和输入框之间的间距，默认为 2
+     */
+    spacing?: any;
+    /**
+     * 是否在标签后显示冒号，默认为 true
+     */
+    colon?: boolean;
+    InputProps?: any;
+    sx: any;
     placeHolder?: string;
     placeholder?: string;
 }

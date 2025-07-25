@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
 				: path.resolve(__dirname, "../dist"), // 生产环境输出路径
 			publicPath: isDev
 				? "http://localhost:2203/" // DevServer 地址
-				: "https://bobliaocommonlib.pages.dev/", // 生产环境使用相对路径或 CDN 路径
+				: "https://main.bobliaocommonlib.pages.dev/", // 生产环境使用相对路径或 CDN 路径
 			filename: isDev
 				? "bundle.js" // 开发环境下简单文件名
 				: "[id]_[name]_[contenthash].rl.js", // 生产环境下带内容哈希的文件名
@@ -302,27 +302,66 @@ module.exports = (env, argv) => {
 				  ]),
 		],
 		// 优化选项配置
-		optimization: {
-			// 开发模式下关闭一些耗时的优化，以提高构建速度
-			removeAvailableModules: isDev ? false : true,
-			removeEmptyChunks: isDev ? false : true,
-			splitChunks: isDev ? false : undefined, // 开发环境关闭代码拆分，生产环境使用默认拆分策略
-			minimize: !isDev, // 生产环境开启代码压缩
-			usedExports: !isDev, // 生产模式执行 Tree-Shaking
-			concatenateModules: !isDev, // 生产模式下启用模块合并优化
-			chunkIds: isDev ? "natural" : "named",
-			moduleIds: isDev ? "natural" : "named",
-			minimizer: !isDev
-				? [
+		optimization: isDev
+			? {
+					// 开发模式下关闭一些耗时的优化，以提高构建速度
+					removeAvailableModules: false,
+					removeEmptyChunks: false,
+					splitChunks: false, // 开发环境关闭代码拆分，生产环境使用默认拆分策略
+					minimize: false, // 生产环境开启代码压缩
+					usedExports: false, // 生产模式执行 Tree-Shaking
+					concatenateModules: false, // 生产模式下启用模块合并优化
+					chunkIds: "natural",
+					moduleIds: "natural",
+					minimizer: [],
+			  }
+			: {
+					removeAvailableModules: true,
+					removeEmptyChunks: true,
+					splitChunks: {
+						chunks: "all",
+						minSize: 20000, // 最小拆分体积
+						maxAsyncRequests: 30,
+						maxInitialRequests: 30,
+						cacheGroups: {
+							defaultVendors: {
+								test: /[\\/]node_modules[\\/]/,
+								priority: -10,
+								reuseExistingChunk: true,
+							},
+							default: {
+								minChunks: 2,
+								priority: -20,
+								reuseExistingChunk: true,
+							},
+						},
+					},
+					minimize: true,
+					usedExports: true,
+					concatenateModules: true,
+					chunkIds: "deterministic", // 让chunk hash更稳定
+					moduleIds: "deterministic", // 模块id稳定
+					realContentHash: true, // 使用真实内容计算hash，提升缓存命中率
+					flagIncludedChunks: true,
+					sideEffects: true, // 需要配合 package.json 的 "sideEffects" 字段
+					minimizer: [
 						new rspack.SwcJsMinimizerRspackPlugin({
-							// 使用 Rspack 内置 SWC 压缩 JS，替代 Terser/ESBuild:contentReference[oaicite:25]{index=25}
-							target: "esnext",
+							compress: {
+								drop_console: true, // 删除 console.log
+								drop_debugger: true, // 删除 debugger
+								passes: 2, // 多次压缩提高优化效果
+								pure_funcs: ["console.info"], // 可以配置清除其它函数调用
+							},
+							mangle: true,
+							format: {
+								comments: false, // 移除注释
+							},
+							target: "es2017",
 						}),
-						new CssMinimizerPlugin(), // 压缩 CSS:contentReference[oaicite:26]{index=26}
-						new HtmlMinimizerPlugin(), // 压缩 HTML（与 HtmlWebpackPlugin 配合）:contentReference[oaicite:27]{index=27}
-				  ]
-				: [],
-		},
+						new CssMinimizerPlugin(),
+						new HtmlMinimizerPlugin(),
+					],
+			  },
 		// 开发服务器配置（仅在 rspack serve 时生效）
 		devServer: isDev
 			? {

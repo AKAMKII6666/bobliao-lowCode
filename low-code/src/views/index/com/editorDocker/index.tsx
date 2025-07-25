@@ -15,6 +15,7 @@ import CodeIcon from "@mui/icons-material/Code";
 import GridViewIcon from "@mui/icons-material/GridView";
 import toast from "react-hot-toast";
 import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 
 /**
  * 传入参数
@@ -238,6 +239,42 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 												}
 												return <QrCodeIcon></QrCodeIcon>;
 											})()}
+										</div>
+									</Tooltip>
+								</>
+							);
+						})()}
+
+						{/* 收藏夹 */}
+						{(function () {
+							if (rendererData.mouseMode === "none") {
+								return null;
+							}
+							return (
+								<>
+									<Tooltip
+										title={rendererData.mouseMode === "componentEdit" ? "控件收藏夹" : "布局收藏夹"}
+										classes={{
+											tooltip: styles.tip,
+										}}
+										followCursor={true}
+									>
+										<div
+											className={
+												styles.blockIcon +
+												" " +
+												(function () {
+													if (rendererData.isopenCollectedBucket) {
+														return styles.selected;
+													}
+													return "";
+												})()
+											}
+											onClick={function () {
+												rendererData.setisopenCollectedBucket(!rendererData.isopenCollectedBucket);
+											}}
+										>
+											<CollectionsBookmarkIcon></CollectionsBookmarkIcon>
 										</div>
 									</Tooltip>
 								</>

@@ -24,6 +24,7 @@ import { useFormik } from "formik";
 import { IdynStateSetting } from "MithalCommonLibrary/PublicInqueryItem";
 import { IDynamicSelectionsParamsProp } from "renderer/utils/dynamicSelectionsParamsHook";
 import { Irectinfo } from "MithalCommonLibrary/formComponentsContainer";
+import { ISingleDatePickerProps } from "MithalCommonLibrary/SingleDatePicker";
 export declare const CommonInqueryComsMap: {
     AntdDateRangePacker: React.ForwardRefExoticComponent<IAntdDateRangePackerProps & React.RefAttributes<import("MithalCommonLibrary/antdDateRangePicker").TAntdDateRangePackerRef>>;
     MithrilAutocomplete: {
@@ -44,6 +45,7 @@ export declare const CommonInqueryComsMap: {
         displayName: string;
     };
     MithrilTextArea: React.FC<EnhancedTextFieldProps>;
+    SingleDatePicker: React.FC<ISingleDatePickerProps>;
 };
 export interface ICommonInqueryitemprops {
     label: string;
@@ -59,7 +61,7 @@ export interface ICommonInqueryitemprops {
         value: string;
     }[] | IDynamicSelectionsParamsProp;
     dynStatesSetting?: Partial<IdynStateSetting>;
-    comProps?: IMithrilInputProps & NumberInputProps & IMithrilSelectProps & IAntdDateRangePackerProps & IMithrilAutocompleteProps & EnhancedTextFieldProps & NumberRangeInputProps;
+    comProps?: IMithrilInputProps & NumberInputProps & IMithrilSelectProps & IAntdDateRangePackerProps & IMithrilAutocompleteProps & EnhancedTextFieldProps & NumberRangeInputProps & ISingleDatePickerProps;
     comType: keyof typeof CommonInqueryComsMap;
 }
 /**

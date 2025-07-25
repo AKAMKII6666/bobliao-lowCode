@@ -9,6 +9,9 @@ const imp_label = lazy(() => import("./components/Label/index"));
 const imp_input = lazy(() => import("./components/Input/index"));
 const imp_Stack = lazy(() => import("MithalCommonLibrary/Stack"));
 const imp_Grid = lazy(() => import("MithalCommonLibrary/Grid"));
+const imp_Icon = lazy(() => import("MithalCommonLibrary/Icon"));
+const imp_IconButton = lazy(() => import("MithalCommonLibrary/IconButton"));
+const imp_SpecialEcharts = lazy(() => import("MithalCommonLibrary/SpecialEcharts"));
 const imp_PageRoot = lazy(() => import("./components/PageRoot"));
 const imp_Button = lazy(() => import("MithalCommonLibrary/Button"));
 const imp_AntdDateRangePacker = lazy(() => import("MithalCommonLibrary/AntdDateRangePacker"));
@@ -53,6 +56,9 @@ export const ComponentNameMap = {
 	TextField: imp_TextField,
 	MithrilSelect: imp_MithrilSelect,
 	CommonInquery: imp_CommonInquery,
+	Icon: imp_Icon,
+	IconButton: imp_IconButton,
+	SpecialEcharts: imp_SpecialEcharts,
 };
 
 /**
@@ -76,6 +82,9 @@ export const importStringMap = {
 	TextField: "MithalCommonLibrary/TextField",
 	MithrilSelect: "MithalCommonLibrary/MithrilSelect",
 	CommonInquery: "MithalCommonLibrary/CommonInquery",
+	Icon: "MithalCommonLibrary/Icon",
+	IconButton: "MithalCommonLibrary/IconButton",
+	SpecialEcharts: "MithalCommonLibrary/SpecialEcharts",
 };
 
 /**
@@ -84,6 +93,85 @@ export const importStringMap = {
 export const NodeTypeMap = {
 	layout: "布局组件",
 	component: "控件",
+};
+
+/* echarts图表的默认配置 */
+const echartDefaulyProps = {
+	grid: {
+		left: 26, // 左边距
+		right: 16, // 右边距
+		top: "87.5px", // 顶部边距
+		bottom: 24, // 底部边距
+		containLabel: true, // 确保 label 也在可视区域内
+	},
+	tooltip: {
+		trigger: "axis",
+		axisPointer: {
+			type: "cross",
+			label: {
+				backgroundColor: "#686A6A",
+			},
+		},
+	},
+	xAxis: {
+		type: "category",
+		data: ["2025-01-01", "2025-01-02", "2025-01-03", "2025-01-04", "2025-01-05", "2025-01-06", "2025-01-07"],
+		splitLine: {
+			show: false, // 隐藏 X 轴网格线
+		},
+		axisLine: {
+			show: false, // 隐藏X轴的线条
+		},
+		axisTick: {
+			show: false, // 显示刻度线
+		},
+		axisLabel: {
+			color: "#686A6A", // 设置字体颜色
+			fontSize: "12px", // 设置字体大小
+		},
+	},
+	yAxis: {
+		type: "value",
+		splitLine: {
+			show: true, // 隐藏 X 轴网格线
+			lineStyle: {
+				type: "dashed", // 设置为虚线
+				color: "rgba(1, 147, 118, 0.20)", // 设置颜色
+			},
+		},
+		axisLine: {
+			show: false, // 隐藏X轴的线条
+		},
+		axisLabel: {
+			color: "#686A6A", // 设置字体颜色
+			fontSize: "12px", // 设置字体大小
+			align: "left", // 左对齐
+			inside: true, // 保持在 Y 轴外部
+			margin: -10, // 文字靠近 Y 轴
+		},
+	},
+	series: [
+		{
+			data: [20, 30, 40, 50, 60, 70, 80],
+			barWidth: "20px",
+			itemStyle: {
+				color: "#019376",
+				borderRadius: [4, 4, 4, 4],
+			},
+			type: "bar",
+		},
+	],
+};
+
+/**
+ * htmlDiv的属性
+ */
+const HTMLDIVprops = {
+	style: {
+		width: "600px",
+		height: "500px",
+		padding: "1px",
+	},
 };
 
 /**
@@ -132,7 +220,7 @@ export const components: ITreeNode[] = [
 		label: "HTML Div",
 		props: {
 			style: {
-				minHeight: "200px",
+				minHeight: "100px",
 				padding: "1px",
 			},
 		},
@@ -250,6 +338,67 @@ export const components: ITreeNode[] = [
 	/*****************************************************************控件 */
 	{
 		nodeid: "",
+		name: "IconButton",
+		label: "mui button + muiicon",
+		props: {
+			iconProp: {
+				iconName: "Edit",
+				iconOwnProps: {
+					style: {
+						color: "#fff",
+						width: "15px",
+						height: "15px",
+						marginRight: "10px",
+					},
+				},
+			},
+			buttonProps: {
+				text: "这是图标按钮",
+				variant: "contained",
+				sx: {
+					padding: "0 8px",
+					minHeight: "38px",
+					lineHeight: "38px",
+				},
+			},
+		},
+		nodetype: "component",
+		componentType: "nomoComponent",
+		containerType: ["gridItem", "div", "MainCard", "li"],
+		isTached: false,
+	},
+	{
+		nodeid: "",
+		name: "SpecialEcharts",
+		label: "React Echarts Core",
+		props: {
+			containerProps: HTMLDIVprops,
+			echartProps: echartDefaulyProps,
+		},
+		nodetype: "component",
+		componentType: "nomoComponent",
+		containerType: ["gridItem", "div", "MainCard", "li"],
+		isTached: false,
+	},
+	{
+		nodeid: "",
+		name: "Icon",
+		label: "MUIIcon",
+		props: {
+			iconName: "Edit",
+			iconOwnProps: {
+				style: {
+					color: "#454545",
+				},
+			},
+		},
+		nodetype: "component",
+		componentType: "nomoComponent",
+		containerType: ["gridItem", "div", "MainCard", "li"],
+		isTached: false,
+	},
+	{
+		nodeid: "",
 		name: "input",
 		label: "HTML Input",
 		props: {},
@@ -330,9 +479,14 @@ export const components: ITreeNode[] = [
 			name: "time_blank",
 			dateFormat: "YYYY-MM-DD",
 		},
+		commonInqueryItemProps: {
+			name: ["timeStart_blank"],
+			defaultValue: "",
+			dateFormat: "YYYY-MM-DD",
+		},
 		nodetype: "component",
 		componentType: "nomoComponent",
-		containerType: ["gridItem", "div", "AutoForm", "li"],
+		containerType: ["gridItem", "div", "AutoForm", "CommonInquery", "li"],
 		isTached: false,
 	},
 	{
@@ -479,9 +633,6 @@ export const components: ITreeNode[] = [
 		label: "文本域",
 		props: {
 			maxLength: 1000,
-			sx: { width: "100%", height: "auto", mt: 1 },
-			InputProps: { rows: 5, multiline: true, inputComponent: "textarea" },
-			helperText: "0/1000",
 		},
 		autoFormItemProps: {
 			isRequiredStyle: false,

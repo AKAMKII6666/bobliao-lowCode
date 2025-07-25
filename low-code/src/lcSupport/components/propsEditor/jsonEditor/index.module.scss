@@ -1,12 +1,25 @@
 .container {
-	width: auto;
-	min-height: 300px;
+	font-size: unset;
+	line-height: unset;
+	border-radius: 8px;
+	border: 2px solid #232323;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	span,
+	label {
+		line-height: unset;
+		height: unset;
+		font-size: unset;
+		display: unset;
+		margin: unset;
+	}
 	.buttonContainer {
 		height: 32px;
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
 		align-items: center;
+		overflow: auto;
 
 		.button {
 			height: 25px;

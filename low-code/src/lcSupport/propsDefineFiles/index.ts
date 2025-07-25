@@ -1,4 +1,5 @@
 import { cssStyleDefine } from "./cssstyleDefine";
+import { iconsStrArr } from "./icons";
 import { makeBooleanNode, makeStringNode } from "./util";
 
 /* mui样式表属性 */
@@ -40,6 +41,43 @@ export const GridProps = {
 	className: makeStringNode([""], "样式绑定", "样式绑定"),
 };
 
+/* 按钮的定义 */
+const buttonProps = {
+	node_explan: "MUI按钮组件的配置",
+	node_label: "按钮配置",
+	className: makeStringNode([""], "样式绑定", "样式绑定"),
+	text: makeStringNode([""], "内容", "内容"),
+	style: cssStyleDefine,
+	sx: sxProps,
+};
+
+/* 图标的定义 */
+const iconProps = {
+	node_explan: "MUI图标组件的配置",
+	node_label: "图标配置",
+	iconName: makeStringNode(iconsStrArr, "要呈现什么样的图标", "图标形态"),
+	iconOwnProps: {
+		node_explan: "MUI Icon的属性",
+		node_label: "图标的属性",
+		style: cssStyleDefine,
+		sx: cssStyleDefine,
+	},
+};
+
+/**
+ * div的属性定义
+ */
+const HtmlDivprops = {
+	node_explan: "HTML dIV的属性",
+	node_label: "div属性",
+	style: cssStyleDefine,
+	className: makeStringNode([""], "样式绑定", "样式绑定"),
+	title: makeStringNode([""], "浏览器原生的tooltip悬浮框", "tooltip悬浮框"),
+	id: makeStringNode([""], "设置元素id", "元素ID"),
+	name: makeStringNode([""], "设置元素name", "元素name"),
+	ariaLabel: makeStringNode([""], "辅助标签", "辅助标签"),
+};
+
 /* 属性面板组件属性定义 */
 export const componentsPropsDefine: any = {
 	PageRoot: {
@@ -61,14 +99,7 @@ export const componentsPropsDefine: any = {
 		elevation: makeStringNode([""], "MUI Card 的 elevation（阴影层级），如设置此项可不使用 boxShadow ", "阴影层级"),
 		title: makeStringNode([""], "卡片标题，可以是字符串或 JSX 结构", "卡片标题"),
 	},
-	div: {
-		style: cssStyleDefine,
-		className: makeStringNode([""], "样式绑定", "样式绑定"),
-		title: makeStringNode([""], "浏览器原生的tooltip悬浮框", "tooltip悬浮框"),
-		id: makeStringNode([""], "设置元素id", "元素ID"),
-		name: makeStringNode([""], "设置元素name", "元素name"),
-		ariaLabel: makeStringNode([""], "辅助标签", "辅助标签"),
-	},
+	div: HtmlDivprops,
 	Stack: {
 		direction: makeStringNode(["row", "column"], "定义排列方向", "排列方向"),
 		spacing: makeStringNode([""], "子组件之间的间距", "子项间距"),
@@ -121,9 +152,9 @@ export const componentsPropsDefine: any = {
 			{
 				node_explan: "AutoForm 的子项配置",
 				node_label: "子项配置",
-				mode: makeStringNode(["add", "edit", "watch"], "给内部formComponentsContainer组件统一的状态对象", "模式"),
-				isRequiredStyle: makeBooleanNode(" 是否显示“必填”样式标识", "必填"),
 				label: makeStringNode([""], "显示的标题，影响组件的标题和Plaveholder以及报错信息的显示", "标题"),
+				isRequiredStyle: makeBooleanNode(" 是否显示“必填”样式标识", "必填"),
+				mode: makeStringNode(["add", "edit", "watch"], "给内部formComponentsContainer组件统一的状态对象", "模式"),
 				unit: makeStringNode([""], "单位，在数字inpuit组件里有效", "单位"),
 				selectItems: [publicSelectionItem],
 				isMutipleSelections: makeBooleanNode(" 是否为多选（可选，默认 false）", "是否为多选"),
@@ -195,12 +226,7 @@ export const componentsPropsDefine: any = {
 		name: makeStringNode([""], "设置元素name", "元素name"),
 		ariaLabel: makeStringNode([""], "辅助标签", "辅助标签"),
 	},
-	Button: {
-		className: makeStringNode([""], "样式绑定", "样式绑定"),
-		text: makeStringNode([""], "内容", "内容"),
-		style: cssStyleDefine,
-		sx: sxProps,
-	},
+	Button: buttonProps,
 	AntdDateRangePacker: {
 		label: makeStringNode([""], "左侧标签文本或自定义节点", "标题"),
 		className: makeStringNode([""], "绑定样式", "绑定样式"),
@@ -340,5 +366,17 @@ export const componentsPropsDefine: any = {
 		disabled: makeBooleanNode("是否禁用选择框，默认为 false", "是否禁用"),
 		colon: makeBooleanNode("是否在标签后面显示冒号，默认为 true", "显示冒号"),
 		spacing: makeStringNode([""], "Stack 组件的子元素之间间距，默认 2", "元素间距"),
+	},
+	Icon: iconProps,
+	IconButton: {
+		iconProp: iconProps,
+		buttonProps: buttonProps,
+	},
+	SpecialEcharts: {
+		containerProps: HtmlDivprops,
+		echartProps: {
+			node_explan: "React Echarts Core",
+			node_label: "React-Echarts-Core属性",
+		},
 	},
 };

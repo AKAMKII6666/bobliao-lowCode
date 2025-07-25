@@ -202,16 +202,20 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 						})()
 					}
 					onMouseEnter={function () {
-						forChildSetHover(true);
-						setiscustomHover(true);
-						customHoverpath.current = _tempNodePath;
-						rendererDataHook.onDragEnter(_tempNodePath);
+						if (!rendererDataHook.isOpenWarpperRightMenu) {
+							forChildSetHover(true);
+							setiscustomHover(true);
+							customHoverpath.current = _tempNodePath;
+							rendererDataHook.onDragEnter(_tempNodePath);
+						}
 					}}
 					onMouseLeave={function () {
-						forChildSetHover(false);
-						setiscustomHover(false);
-						customHoverpath.current = _tempNodePath;
-						rendererDataHook.onDragOut();
+						if (!rendererDataHook.isOpenWarpperRightMenu) {
+							forChildSetHover(false);
+							setiscustomHover(false);
+							customHoverpath.current = _tempNodePath;
+							rendererDataHook.onDragOut();
+						}
 					}}
 					onMouseUp={function (_e) {
 						forChildSetHover(false);
@@ -418,18 +422,23 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 							};
 						})()}
 						onMouseEnter={function () {
-							forChildSetHover(true);
-							setiscustomHover(true);
-							customHoverpath.current = currentChildPathArray;
-							rendererDataHook.onDragEnter(currentChildPathArray);
+							if (!rendererDataHook.isOpenWarpperRightMenu) {
+								forChildSetHover(true);
+								setiscustomHover(true);
+								customHoverpath.current = currentChildPathArray;
+								rendererDataHook.onDragEnter(currentChildPathArray);
+							}
 						}}
 						onMouseLeave={function () {
-							forChildSetHover(false);
-							setiscustomHover(false);
-							customHoverpath.current = currentChildPathArray;
-							rendererDataHook.onDragOut();
+							if (!rendererDataHook.isOpenWarpperRightMenu) {
+								forChildSetHover(false);
+								setiscustomHover(false);
+								customHoverpath.current = currentChildPathArray;
+								rendererDataHook.onDragOut();
+							}
 						}}
 						onMouseDown={function (_e) {
+							switchWrongMode(childItem);
 							if (_e.button === 0) {
 								setautoFormRectChangeStamp(+new Date());
 								rendererDataHook.onDragStart(childItem, currentChildPathArray);
@@ -451,6 +460,10 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 							}
 						}}
 						onContextMenu={(e) => {
+							//如果互相在错误的模式里就自动切换
+							switchWrongMode();
+							rendererDataHook.editNodeProps(childItem, currentChildPathArray);
+							rendererDataHook.setisOpenWarpperRightMenu(false);
 							e.preventDefault(); // 阻止系统默认右键菜单
 						}}
 					>
@@ -738,6 +751,33 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		});
 	};
 
+	/* 互相将错误的模式切换过来 */
+	const switchWrongMode = function (currentNode?) {
+		if (typeof currentNode !== "undefined") {
+			if (currentNode.nodetype === "layout" && rendererDataHook.mouseMode === "componentEdit") {
+				rendererDataHook.setMouseMode("layoutEdit");
+				toast.success(`已切换为布局模式!`);
+				return;
+			}
+			if (currentNode.nodetype === "component" && rendererDataHook.mouseMode === "layoutEdit") {
+				rendererDataHook.setMouseMode("componentEdit");
+				toast.success(`已切换为组件模式!`);
+				return;
+			}
+			return;
+		}
+		if (node.nodetype === "layout" && rendererDataHook.mouseMode === "componentEdit") {
+			rendererDataHook.setMouseMode("layoutEdit");
+			toast.success(`已切换为布局模式!`);
+			return;
+		}
+		if (node.nodetype === "component" && rendererDataHook.mouseMode === "layoutEdit") {
+			rendererDataHook.setMouseMode("componentEdit");
+			toast.success(`已切换为组件模式!`);
+			return;
+		}
+	};
+
 	//===============effects==================
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
@@ -813,7 +853,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			{/* 创建AutoHover / CommonInquery子项目的事件接受层 */}
 			{useMemo(
 				function () {
-					if (rendererDataHook.mouseMode === "componentEdit" && (node.name === "AutoForm" || node.name === "CommonInquery")) {
+					if (/* rendererDataHook.mouseMode === "componentEdit" && */ node.name === "AutoForm" || node.name === "CommonInquery") {
 						if (
 							rendererDataHook.mouseAction === "drag" && //当前的布局容器必须能和当前拖拽的容器类型能够匹配
 							!rendererDataHook.renderTreeObj.isDropAllowed(rendererDataHook.currentDraggingNode, node)
@@ -911,9 +951,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			{/* 制造hover事件接收器 */}
 			{useMemo(
 				function () {
-					if (node.nodetype === "component" && rendererDataHook.mouseMode === "layoutEdit") {
+					/* if (node.nodetype === "component" && rendererDataHook.mouseMode === "layoutEdit") {
 						return null;
-					}
+					} */
 					return (
 						<>
 							{(function () {
@@ -932,7 +972,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 												}}
 											>
 												{(function () {
-													if (node.nodetype === "layout" && parentNode.name !== "PageRoot") {
+													if (/* node.nodetype === "layout" &&  */ parentNode.name !== "PageRoot") {
 														return (
 															<>
 																<Tooltip
@@ -1033,6 +1073,61 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 												</Tooltip>
 												<span></span>
 												<Tooltip
+													title="收藏节点"
+													placement="right"
+													classes={{
+														tooltip: styles.tpaaaaaaaaaaaaaa,
+													}}
+													followCursor={true}
+												>
+													<div
+														className={styles.icon + " " + styles.icon7}
+														onClick={function (_e) {
+															Modal.confirm({
+																title: "收藏节点",
+																width: "600px",
+																content: (
+																	<>
+																		<p>确认收藏以下节点吗</p>
+																		<p>{`${node.name} - ${node.label} - ${node.nodeid}`}</p>
+																		<p>
+																			请重命名:<input type="text" id="collectname"></input>
+																		</p>
+																	</>
+																),
+																okText: "收藏节点",
+																cancelText: "取消收藏",
+																onOk() {
+																	let name = $("#collectname").val();
+																	if (name.trim() !== "") {
+																		rendererDataHook.collectNode(pathArray, name);
+																	} else {
+																		toast.error("收藏失败，请填写收藏名称！");
+																	}
+																},
+																onCancel() {},
+															});
+														}}
+													></div>
+												</Tooltip>
+												<span></span>
+												<Tooltip
+													title="查看渲染树"
+													placement="right"
+													classes={{
+														tooltip: styles.tpaaaaaaaaaaaaaa,
+													}}
+													followCursor={true}
+												>
+													<div
+														className={styles.icon + " " + styles.icon8}
+														onClick={function (_e) {
+															rendererDataHook.watchNode(pathArray);
+														}}
+													></div>
+												</Tooltip>
+												<span></span>
+												<Tooltip
 													title="删除节点"
 													placement="right"
 													classes={{
@@ -1097,27 +1192,30 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 									_e.preventDefault();
 								}}
 								onMouseDown={function (_e) {
-									if (
+									//如果互相在错误的模式里就自动切换
+									switchWrongMode();
+									/* 	if (
 										(node.nodetype === "layout" && rendererDataHook.mouseMode === "layoutEdit") ||
 										(node.nodetype === "component" && rendererDataHook.mouseMode === "componentEdit")
-									) {
-										if (_e.button === 0) {
-											//左键才触发拖拽
-											if (node.name === "PageRoot") {
-												toast.error("页面根节点无法被拖拽!");
-												return;
-											}
-											rendererDataHook.onDragStart(node, pathArray);
-											if (wrapperDivRef.current !== null) {
-												let position = $(wrapperDivRef.current).offset();
-												rendererDataHook.setdragBPosition({
-													x: position.left,
-													y: position.top,
-												});
-											}
-											forChildSetHover(false, true);
+									) { */
+									if (_e.button === 0) {
+										//左键才触发拖拽
+										if (node.name === "PageRoot") {
+											toast.error("页面根节点无法被拖拽!");
+											return;
 										}
+										rendererDataHook.onDragStart(node, pathArray);
+										if (wrapperDivRef.current !== null) {
+											let position = $(wrapperDivRef.current).offset();
+											rendererDataHook.setdragBPosition({
+												x: position.left,
+												y: position.top,
+											});
+										}
+										forChildSetHover(false, true);
 									}
+									/* } else {
+									} */
 								}}
 								onContextMenu={(e) => {
 									if (node.name === "PageRoot") {
@@ -1125,25 +1223,21 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 										e.preventDefault(); // 阻止系统默认右键菜单
 										return;
 									}
-									if (
+									//如果互相在错误的模式里就自动切换
+									switchWrongMode();
+									/* if (
 										(node.nodetype === "layout" && rendererDataHook.mouseMode === "layoutEdit") ||
 										(node.nodetype === "component" && rendererDataHook.mouseMode === "componentEdit")
-									) {
-										rendererDataHook.setisOpenWarpperRightMenu(true);
-										rendererDataHook.setcurrentMenuNodeObj({
-											wrapperDivRef: wrapperDivRef.current,
-											wrapperTitleRef: wrapperTitleRef.current,
-											currentNodePath: pathArray,
-											levelIndex: -1,
-										});
-									} else {
-										if (rendererDataHook.mouseMode === "componentEdit") {
-											toast.error("布局编辑模式下才能呼出布局组件的菜单");
-										}
-										if (rendererDataHook.mouseMode === "layoutEdit") {
-											toast.error("组件编辑模式下才能呼出组件的菜单");
-										}
-									}
+									) { */
+									rendererDataHook.setisOpenWarpperRightMenu(true);
+									rendererDataHook.setcurrentMenuNodeObj({
+										wrapperDivRef: wrapperDivRef.current,
+										wrapperTitleRef: wrapperTitleRef.current,
+										currentNodePath: pathArray,
+										levelIndex: -1,
+									});
+									/* } else {
+									} */
 									e.preventDefault(); // 阻止系统默认右键菜单
 								}}
 								onMouseEnter={function () {

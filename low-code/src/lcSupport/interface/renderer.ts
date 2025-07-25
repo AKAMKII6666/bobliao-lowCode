@@ -1,3 +1,5 @@
+import { ITreeNode } from "./ItreeNode";
+
 //当前鼠标的编辑模式
 export type TEditorMode = "componentEdit" | "layoutEdit" | "propsEdit" | "none";
 
@@ -20,4 +22,10 @@ export interface warpperDivObj {
 	currentNodePath: number[];
 	//当前节点的位置
 	levelIndex: number;
+}
+
+//定义收藏结构体
+export interface IcollectingItem {
+	node: ITreeNode;
+	classes: string;
 }

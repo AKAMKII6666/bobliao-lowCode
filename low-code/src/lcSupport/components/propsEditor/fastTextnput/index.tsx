@@ -319,8 +319,16 @@ const FastTextInput = forwardRef<IFastTextInputRef, IFastTextInputProps>(
 					} else {
 						setcurrentCompleteText(
 							completeTexts.reduce(function (acc, item, index) {
-								if (item.value.toString().indexOf(currentValue) !== -1 || item.label.toString().indexOf(currentValue) !== -1) {
-									acc.push(item);
+								try {
+									if (
+										item.value.toString().toLowerCase().indexOf(currentValue.toLowerCase()) !== -1 ||
+										item.label.toString().toLowerCase().indexOf(currentValue.toLowerCase()) !== -1
+									) {
+										acc.push(item);
+									}
+								} catch (_e) {
+									console.log(item);
+									console.error("Error processing completeTexts:", _e);
 								}
 								return acc;
 							}, [])

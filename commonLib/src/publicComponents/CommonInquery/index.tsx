@@ -26,6 +26,7 @@ import useDynamicSelectionsParams, { IDynamicSelectionsParamsProp } from "render
 import toast from "react-hot-toast";
 import { isEmpty } from "renderer/utils/utils";
 import { Irectinfo } from "MithalCommonLibrary/formComponentsContainer";
+import SingleDatePicker, { ISingleDatePickerProps } from "MithalCommonLibrary/SingleDatePicker";
 
 //CommonInqueryComsMap的组件映射表
 export const CommonInqueryComsMap = {
@@ -36,6 +37,7 @@ export const CommonInqueryComsMap = {
 	NumberRangeInput: NumberRangeInput,
 	MithrilSelect: MithrilSelect,
 	MithrilTextArea: MithrilTextArea,
+	SingleDatePicker: SingleDatePicker,
 };
 
 //组件配置项
@@ -67,7 +69,8 @@ export interface ICommonInqueryitemprops {
 		IAntdDateRangePackerProps &
 		IMithrilAutocompleteProps &
 		EnhancedTextFieldProps &
-		NumberRangeInputProps;
+		NumberRangeInputProps &
+		ISingleDatePickerProps;
 	comType: keyof typeof CommonInqueryComsMap;
 }
 

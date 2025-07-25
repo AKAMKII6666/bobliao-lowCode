@@ -900,6 +900,16 @@ const FormComponentsContainer: FC<IFormComponentsContainerProps> = ({
 				},
 				{}
 			);
+			if (dateFormat === "YYYY-MM") {
+				props.maxDate = dayjs().subtract(1, "month");
+				props.displayWeekNumber = false;
+				props.views = ["year", "month"];
+			}
+			if (dateFormat === "YYYY") {
+				props.maxDate = dayjs().subtract(1, "year");
+				props.displayWeekNumber = false;
+				props.views = ["year"];
+			}
 		}
 		return props;
 	};

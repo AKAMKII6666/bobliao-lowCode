@@ -126,6 +126,7 @@
 		"os-browserify": "^0.3.0",
 		"path-browserify": "^1.0.1",
 		"postcss-loader": "^8.1.1",
+		"raw-loader": "^4.0.2",
 		"react-error-boundary": "^4.0.13",
 		"react-hot-loader": "^4.13.1",
 		"react-hot-toast": "^2.4.1",

@@ -344,6 +344,9 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 		if (comName === "NumberRangeInput") {
 			return "";
 		}
+		if (comName === "SingleDatePicker") {
+			return "请输入";
+		}
 		return "请输入";
 	};
 
@@ -428,6 +431,7 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 				{
 					label: label,
 					name: name,
+					labelWidth: labelWidth,
 					size: "small",
 					data: selectItems ? selectItems : [{ label: "暂无选项", value: "-99" }],
 					sx: { width: "100%" },
@@ -463,6 +467,7 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 			props = propsMerger(
 				{
 					label: label,
+					labelWidth: labelWidth,
 					data: selectItems ? selectItems : [{ label: "暂无选项", value: "-99" }],
 					sx: { width: "100%" },
 					value: (function () {
@@ -495,6 +500,7 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 			props = propsMerger(
 				{
 					label: label,
+					labelWidth: labelWidth,
 					data: selectItems ? selectItems : [{ label: "暂无选项", value: "-99" }],
 					sx: { width: "100%" },
 					value: (function () {
@@ -573,6 +579,50 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 			);
 		}
 
+		if (comName === "SingleDatePicker") {
+			let _value = getPropoty(formik.values, name);
+			props = propsMerger(
+				{
+					label: label,
+					labelWidth: labelWidth,
+					format: dateFormat,
+					onAccept: (value) => {
+						if (!value) {
+							return;
+						}
+						const formatStr = dateFormat;
+						formik.setFieldValue("birthday", dayjs(value).format(formatStr));
+					},
+					onChange: (value) => {
+						if (!value || !value.isValid()) {
+							return;
+						}
+						const formatStr = dateFormat;
+						formik.setFieldValue("birthday", dayjs(value).format(formatStr));
+					},
+					sx: {
+						flexGrow: 1,
+						height: "40.125px",
+						"& .MuiInputBase-input": {
+							padding: "9.9px 14px",
+						},
+					},
+					value: _value ? dayjs(_value) : undefined,
+				},
+				props
+			);
+			if (dateFormat === "YYYY-MM") {
+				props.maxDate = dayjs().subtract(1, "month");
+				props.displayWeekNumber = false;
+				props.views = ["year", "month"];
+			}
+			if (dateFormat === "YYYY") {
+				props.maxDate = dayjs().subtract(1, "year");
+				props.displayWeekNumber = false;
+				props.views = ["year"];
+			}
+		}
+
 		if (comName === "NumberRangeInput" && Array.isArray(name)) {
 			delete props.placeholder;
 			props = propsMerger(
@@ -603,6 +653,7 @@ const PublicInqueryItem: FC<IPublicInqueryItemprops> = ({
 				{
 					label: label,
 					name: name,
+					labelWidth: labelWidth,
 					size: "small",
 					fullWidth: true,
 					sx: { width: "100%" },

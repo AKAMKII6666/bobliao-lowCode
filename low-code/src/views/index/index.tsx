@@ -18,6 +18,8 @@ import CodeGenWindow from "./com/codeGenWindow";
 import PropsEditor from "./com/propsEditor";
 import NodeEditArea from "./com/nodeEditArea";
 import ScssEditor from "./com/scssEditor";
+import CollectNodeList from "./com/collectedNodeList";
+import WatchRenderertreeWindow from "./com/watchRenderertreeWindow";
 /**
  * 传入参数
  */
@@ -62,12 +64,21 @@ const Insider: FC<iprops> = ({}): ReactElement => {
 			<EditorDragCover></EditorDragCover>
 			<NodeTrashBin></NodeTrashBin>
 			<NodeEditArea></NodeEditArea>
-			{/* 编辑器左边组件列表 */}
+			{/* 编辑器组件列表 */}
 			<EditorComList></EditorComList>
+			{/* 收藏的组件列表 */}
+			<CollectNodeList></CollectNodeList>
 			{/* 代码生成窗口 */}
 			{(function () {
 				if (renderData.isopenCodeWindow) {
 					return <CodeGenWindow></CodeGenWindow>;
+				}
+				return null;
+			})()}
+			{/* 渲染树查看窗口 */}
+			{(function () {
+				if (renderData.isopenNoderenderertree) {
+					return <WatchRenderertreeWindow></WatchRenderertreeWindow>;
 				}
 				return null;
 			})()}

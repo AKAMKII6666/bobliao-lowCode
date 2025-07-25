@@ -45,8 +45,8 @@ var devConfig = {
 	// 明确目标环境（浏览器）
 	target: ["web"], // 或 'browserslist'
 	optimization: {
-		chunkIds: "named",
-		moduleIds: "named",
+		/* 		chunkIds: "named",
+		moduleIds: "named", */
 		minimize: true,
 		//使用 Tree-Shaking 删除多余模块导出
 		usedExports: true,
@@ -58,10 +58,10 @@ var devConfig = {
 		minimizer: [
 			new ESBuildMinifyPlugin({
 				target: "esnext",
-				keepNames: true, // ✅ 保留变量/类名
-				minifyIdentifiers: false, // ❌ 关闭标识符压缩
+				/* 				keepNames: false, // ✅ 保留变量/类名
+				minifyIdentifiers: true, // ❌ 关闭标识符压缩
 				minifySyntax: true, // 仅压缩语法
-				minifyWhitespace: true, // 仅压缩空格
+				minifyWhitespace: true, // 仅压缩空格 */
 			}),
 		],
 		/**
@@ -124,7 +124,7 @@ var devConfig = {
 		new ModuleFederationPlugin({
 			name: "HostApp",
 			remotes: {
-				MithalCommonLibrary: "MithalCommonLibrary@https://bobliaocommonlib.pages.dev/remoteEntry.js",
+				MithalCommonLibrary: "MithalCommonLibrary@https://main.bobliaocommonlib.pages.dev/remoteEntry.js",
 			},
 			shared: sharedConfig,
 		}),

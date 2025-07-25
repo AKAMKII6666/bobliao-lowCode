@@ -1,0 +1,81 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "EChartsOption",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "object",
+			"properties": {
+				"text": {
+					"type": "string"
+				},
+				"subtext": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": true
+		},
+		"tooltip": {
+			"type": "object",
+			"properties": {
+				"trigger": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": true
+		},
+		"xAxis": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/XAxisOption"
+				},
+				{
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/XAxisOption"
+					}
+				}
+			]
+		},
+		"yAxis": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/YAxisOption"
+				},
+				{
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/YAxisOption"
+					}
+				}
+			]
+		}
+	},
+	"definitions": {
+		"XAxisOption": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": true
+		},
+		"YAxisOption": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": true
+		}
+	},
+	"additionalProperties": true
+}

@@ -29,6 +29,6 @@
 			"*": ["./src/*"]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/dev-hotloader.ts", "global.d.ts"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/dev-hotloader.ts", "global.d.ts", "genimportmap.js"],
 	"exclude": ["node_modules", "node_modules/*/**", "dist", "src/types/overrides"]
 }

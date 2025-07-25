@@ -7,6 +7,7 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, FC, ReactElement } from "react";
 import { Box, Button, Divider, Grid, MenuItem, Stack } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
+import Icon from "MithalCommonLibrary/Icon";
 /**
  * 传入参数
  */
@@ -90,7 +91,7 @@ const TestPage: FC<iprops> = (): ReactElement => {
 
 	return (
 		<>
-			<Grid container spacing={4}></Grid>
+			<Icon></Icon>
 		</>
 	);
 };

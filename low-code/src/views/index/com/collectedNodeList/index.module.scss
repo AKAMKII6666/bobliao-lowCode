@@ -1,0 +1,109 @@
+.container {
+	overflow: hidden;
+	overflow-y: auto;
+
+	transition: all 0.3s;
+
+	.cardContainer {
+		overflow: hidden;
+		padding: 10px;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+		grid-gap: 10px;
+	}
+}
+.header {
+	height: 53px;
+	line-height: 53px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+
+	span,
+	svg {
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
+.comItem {
+	user-select: none;
+	-webkit-user-drag: none;
+	position: relative;
+	width: 124px;
+	height: 124px;
+	border: 1px solid #0193761b;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	.close,
+	.watch {
+		position: absolute;
+		width: 30px;
+		height: 30px;
+		font-size: 16px;
+		font-family: "webdings";
+		color: #fff;
+		line-height: 30px;
+		text-align: center;
+		background-color: #671111;
+		border-radius: 30px;
+		margin-top: -110.2px;
+		margin-left: 107px;
+		cursor: pointer;
+		z-index: 100;
+	}
+	.watch {
+		margin-top: 110.2px;
+		margin-left: 107px;
+	}
+
+	.eventCover {
+		-webkit-user-drag: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1;
+		user-select: none;
+		cursor: pointer;
+	}
+	.itemView {
+		-webkit-user-drag: none;
+		height: 62px;
+		width: 100%;
+		border-radius: 8px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		align-content: center;
+		cursor: pointer;
+
+		.icon {
+			width: 55px;
+			height: 55px;
+			color: #019376;
+		}
+	}
+
+	.itemTitle {
+		-webkit-user-drag: none;
+		margin-top: 8px;
+		height: 18px;
+		line-height: 18px;
+		border-radius: 8px;
+		text-align: center;
+		font-size: 12px;
+	}
+}
+
+.tip {
+	z-index: 200;
+	background-color: #1c1635;
+}

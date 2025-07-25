@@ -15,13 +15,44 @@ import { DatePicker, LocalizationProvider, DatePickerProps } from "@mui/x-date-p
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/zh-cn";
 import dayjs, { Dayjs } from "dayjs";
-import { TextField } from "@mui/material";
+import { Stack, SxProps, TextField, Theme, Typography } from "@mui/material";
+
 // 设置全局的 locale
 dayjs.locale("zh-cn");
 /**
  * 传入参数
  */
 export interface ISingleDatePickerProps extends Omit<DatePickerProps<Dayjs>, "placeHolder" | "placeholder"> {
+	/**
+	 * 左侧标签文本或自定义节点
+	 */
+	label?: React.ReactNode | string;
+
+	/**
+	 * 左侧标签宽度（单位默认为 px），不传则自适应内容宽度
+	 */
+	labelWidth?: number;
+
+	/**
+	 * 包裹内容的 Stack 组件的额外样式，使用 MUI 的 sx 语法
+	 */
+	stackSx?: SxProps<Theme>;
+	/**
+	 * 布局方向，可选 "row" 或 "column"，决定标签与输入框的排列方式，默认为 "row"
+	 */
+	direction?: any;
+	/**
+	 * 标签和输入框之间的间距，默认为 2
+	 */
+	spacing?: any;
+	/**
+	 * 是否在标签后显示冒号，默认为 true
+	 */
+	colon?: boolean;
+	/* textFaild的样式 */
+	InputProps?: any;
+	/* sx */
+	sx: any;
 	placeHolder?: string;
 	placeholder?: string;
 }
@@ -30,7 +61,20 @@ export interface ISingleDatePickerProps extends Omit<DatePickerProps<Dayjs>, "pl
 export type Tinputprops = ISingleDatePickerProps;
 
 const SingleDatePicker: FC<ISingleDatePickerProps> = (props): ReactElement => {
-	const { placeHolder, placeholder, format = "YYYY-MM-DD", ...restProps } = props;
+	const {
+		label,
+		stackSx,
+		colon = true,
+		direction = "row",
+		spacing,
+		labelWidth,
+		placeHolder,
+		placeholder,
+		format = "YYYY-MM-DD",
+		InputProps = {},
+		sx = {},
+		...restProps
+	} = props;
 	//===============useHooks=================
 
 	//===============state====================
@@ -62,49 +106,58 @@ const SingleDatePicker: FC<ISingleDatePickerProps> = (props): ReactElement => {
 
 	return (
 		<>
-			<LocalizationProvider dateAdapter={AdapterDayjs}>
-				<DatePicker
-					{...restProps}
-					slots={{
-						field: (props: any) => {
-							// 从 params 解构出框架注入的属性
-							let { inputRef, inputProps, InputProps, value, ...textFieldProps } = props;
-							if (value !== null && value !== "") {
-								value = dayjs(value).format(format);
-							}
-							return (
-								<TextField
-									style={{ marginTop: 0 }}
-									{...props}
-									value={value}
-									placeholder={(placeHolder || placeholder) ?? format}
-									inputRef={inputRef}
-									// 取框架给你的 inputProps（里含 value: '2025/05/14'）
-									InputProps={props.InputProps}
-									inputProps={{
-										...inputProps,
-										readOnly: true, // 禁止键盘输入
-									}}
-									onClick={(e) => {
-										setOpen(true); // 整个点击区也能打开
-									}}
-								/>
-							);
-						},
-					}}
-					slotProps={{
-						popper: {
-							sx: {
-								//这里修复层在关闭一瞬间反复跳动造成体验不良
-								zIndex: open ? 999 : -1,
+			<Stack alignItems={direction === "row" ? "center" : "start"} direction={direction} sx={stackSx} justifyContent="start" spacing={spacing}>
+				{label && (
+					<Typography sx={{ width: labelWidth ? labelWidth : "auto" }}>
+						{label} {colon ? ":" : ""}
+					</Typography>
+				)}
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<DatePicker
+						{...restProps}
+						slots={{
+							field: (props: any) => {
+								// 从 params 解构出框架注入的属性
+								let { inputRef, inputProps, InputProps, value, ...textFieldProps } = props;
+								if (value !== null && value !== "") {
+									value = dayjs(value).format(format);
+								}
+								return (
+									<TextField
+										style={{ marginTop: 0 }}
+										{...props}
+										{...InputProps}
+										value={value}
+										placeholder={(placeHolder || placeholder) ?? format}
+										inputRef={inputRef}
+										// 取框架给你的 inputProps（里含 value: '2025/05/14'）
+										InputProps={props.InputProps}
+										inputProps={{
+											...inputProps,
+											readOnly: true, // 禁止键盘输入
+										}}
+										onClick={(e) => {
+											setOpen(true); // 整个点击区也能打开
+										}}
+									/>
+								);
 							},
-						},
-					}}
-					open={open}
-					onClose={() => setOpen(false)}
-					onOpen={() => setOpen(true)}
-				/>
-			</LocalizationProvider>
+						}}
+						slotProps={{
+							popper: {
+								sx: {
+									//这里修复层在关闭一瞬间反复跳动造成体验不良
+									zIndex: open ? 999 : -1,
+								},
+							},
+						}}
+						sx={sx}
+						open={open}
+						onClose={() => setOpen(false)}
+						onOpen={() => setOpen(true)}
+					/>
+				</LocalizationProvider>
+			</Stack>
 		</>
 	);
 };

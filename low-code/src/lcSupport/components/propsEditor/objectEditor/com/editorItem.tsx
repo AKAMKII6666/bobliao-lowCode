@@ -159,6 +159,12 @@ const EditorItem: FC<IEditorItemProps> = (
 							toast.error("Json格式错误!请检查后再提交更改!");
 						}
 					}}
+					mode={(function () {
+						if (obj.key === "echartProps") {
+							return "echartProps";
+						}
+						return "";
+					})()}
 				></JSONEditor>
 			);
 		}
@@ -206,6 +212,49 @@ const EditorItem: FC<IEditorItemProps> = (
 				<>
 					<div className={styles.objIcon}>
 						{"{    }"}
+						{(function () {
+							if (obj.key === "style") {
+								return (
+									<>
+										<Tooltip title={"转至Scss"}>
+											<span
+												className={styles.spanJsonEditor}
+												style={{
+													marginRight: 0,
+												}}
+												onClick={async function () {
+													let _currentScssCode: string = await new Promise(function (_res) {
+														renderData.setcurrentScssCode(function (_v) {
+															_res(_v);
+															return _v;
+														});
+													});
+
+													let node = renderData.renderTreeObj.findNodeByPath(
+														renderData.renderTreeObj.renderTree,
+														renderData.settingPropsNodePath
+													);
+													if (!node) return;
+													_currentScssCode = await renderData.formatScssCode(
+														`
+															.STYLE_${node.nodeid}{
+																${renderData.styleObjectToString(obj.value)}
+															}
+														` + _currentScssCode
+													);
+													renderData.setcurrentScssCode(_currentScssCode);
+													renderData.setisopenScssEditorWindow(true);
+													deleteKey(objkey);
+												}}
+											>
+												t
+											</span>
+										</Tooltip>
+									</>
+								);
+							}
+							return null;
+						})()}
 						<Tooltip title={"Json编辑器"}>
 							<span
 								className={styles.spanJsonEditor}

@@ -15,21 +15,59 @@ export interface iprops {
 	value: string;
 	close: () => void;
 	submit: (str: string) => void;
+	mode: "" | "echartProps";
 }
 
-const JSONEditor: FC<iprops> = ({ value, close, submit }, _ref): ReactElement => {
+const JSONEditor: FC<iprops> = ({ value, close, submit, mode = "" }, _ref): ReactElement => {
 	//===============useHooks=================
 
 	//===============state====================
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const [currentJson, setcurrentJson] = useState<string>("");
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [height, setHeight] = useState(100); // 初始高度
 
 	//===============static===================
 
 	//===============ref======================
+	const editorRef = useRef(null);
 
 	//===============function=================
-	const loadData = async function (): Promise<void> {};
+	function handleEditorDidMount(editor: any) {
+		editorRef.current = editor;
+
+		// 内容大小变化时更新高度
+		editor.onDidContentSizeChange(() => {
+			const contentHeight = editor.getContentHeight();
+			setHeight(contentHeight);
+		});
+
+		// 首次设置
+		setTimeout(() => {
+			const contentHeight = editor.getContentHeight();
+			setHeight(contentHeight);
+		}, 0);
+
+		// 👇关键：查找真实滚动元素
+		setTimeout(() => {
+			const domNode = editor.getDomNode();
+			if (!domNode || !containerRef.current) return;
+
+			const scrollEl = domNode.querySelector(".monaco-scrollable-element");
+			if (!scrollEl) return;
+
+			// 强制监听内部滚轮
+			scrollEl.addEventListener(
+				"wheel",
+				(e: WheelEvent) => {
+					e.stopPropagation();
+					const cloned = new WheelEvent("wheel", e);
+					containerRef.current?.dispatchEvent(cloned);
+				},
+				{ passive: false }
+			);
+		}, 0);
+	}
 
 	//===============effects==================
 	useEffect(
@@ -49,24 +87,25 @@ const JSONEditor: FC<iprops> = ({ value, close, submit }, _ref): ReactElement =>
 
 	return (
 		<>
-			<div className={styles.container}>
+			<div ref={containerRef} className={styles.container}>
 				<Editor
 					width={"auto"}
-					height={"200px"}
+					height={height}
 					defaultLanguage="json"
 					defaultValue={""}
 					value={value}
-					theme="vs-light"
+					theme="vs-dark"
 					onChange={(val) => {
 						setcurrentJson(val);
 					}}
 					options={{
 						fontSize: 14,
-						minimap: { enabled: true },
+						minimap: { enabled: false },
 						automaticLayout: true,
 						scrollBeyondLastLine: false,
 						wordWrap: "off",
 					}}
+					onMount={handleEditorDidMount}
 				/>
 				<div className={styles.buttonContainer}>
 					<div

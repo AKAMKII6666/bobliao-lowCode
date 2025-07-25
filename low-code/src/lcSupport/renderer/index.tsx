@@ -9,7 +9,7 @@ import React, { createContext, useState, useContext, useEffect, ReactElement, FC
 import useRenderTreeHook from "../renderTreeController/renderTreeHook";
 import { ICommonInqueryitempropsWithoutYup, ITreeNode, TNodeType } from "../interface/ItreeNode";
 import { ComponentNameMap } from "../lcsUtils";
-import { coordXY, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
+import { coordXY, IcollectingItem, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
 import { Immer, produce } from "immer";
 import { newGuid } from "MithalCommonLibrary/utils/utils";
 import useJquery from "@bobliao/use-jquery-hook";
@@ -22,6 +22,8 @@ import ErrorBoundary from "../components/ErrorBoundary";
 import useLocalStorage from "use-local-storage";
 import useDebounce from "MithalCommonLibrary/utils/debounceHook";
 import { compileStringAsync } from "sass";
+import prettier from "prettier/standalone";
+import parserScss from "prettier/plugins/postcss";
 
 //定义勾子的返回类型
 export type TRendererHookReturnType = ReturnType<typeof useRendererDataHook>;
@@ -39,6 +41,10 @@ export const useRendererDataHook = function () {
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	/* 是否打开scss编辑器 */
 	const [isopenScssEditorWindow, setisopenScssEditorWindow] = useState<boolean>(false);
+	/**
+	 * 当前收藏的节点列表
+	 */
+	const [collectedNodes, setcollectedNodes] = useLocalStorage<string>("_collectedNodes_", "[]");
 	/* 当前scss编辑内容 */
 	const [currentScssCode, setcurrentScssCode] = useLocalStorage<string>("_currentPageScssFile_", "");
 	/* 当前需要注入到页面内的css内容(用于预览 ) */
@@ -83,9 +89,18 @@ export const useRendererDataHook = function () {
 		y: 0,
 	});
 
+	/* 节点渲染树查看 */
+	const [tempNodeRendererTree, settempNodeRendererTree] = useState<string>("");
+	/* 节点当前的css样式 */
+	const [tempNodecssstyle, settempNodecssstyle] = useState<string>("");
+	/* 是否打开节点渲染树查看 */
+	const [isopenNoderenderertree, setisopenNoderenderertree] = useState<boolean>(false);
+
 	/* 当前正在拖拽的节点 */
 	const [currentDraggingNode, setcurrentDraggingNode] = useState<ITreeNode | null>(null);
 	const [currentDraggingNodePath, setcurrentDraggingNodePath] = useState<number[] | null>(null);
+	/* 当前正在拖拽节点的样式 */
+	const [currentdraggingNodeClasses, setcurrentdraggingNodeClasses] = useState<string>("");
 
 	/* 当前鼠标指向的放置节点 */
 	const [currentDraggingTargetNodePath, setcurrentDraggingTargetNodePath] = useState<number[] | null>(null);
@@ -109,6 +124,8 @@ export const useRendererDataHook = function () {
 	const [warpperhoverStateUpdateStamp, setwarpperhoverStateUpdateStamp] = useState<Number>(-1);
 
 	/* 是否打开了组件篮子 */
+	const [isopenCollectedBucket, setisopenCollectedBucket] = useState<boolean>(false);
+	/* 是否打开了收藏的组件篮子 */
 	const [isopenBucket, setisopenBucket] = useState<boolean>(false);
 
 	/* 是否打开了代码窗体 */
@@ -159,6 +176,8 @@ export const useRendererDataHook = function () {
 	]);
 
 	//===============static===================
+	/* scss编译时的隔离样式名 */
+	const scssComplierStylesiclutionName = ".bobliao_lc_editor_main_content_root";
 
 	//===============formik===================
 	const fakeFormik = useFormik({
@@ -199,6 +218,17 @@ export const useRendererDataHook = function () {
 	});
 
 	//===============function=================
+
+	function camelToKebab(str: string) {
+		return str.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+	}
+
+	function styleObjectToString(style: Record<string, string | number>) {
+		return Object.entries(style)
+			.map(([key, value]) => `${camelToKebab(key)}: ${value}`)
+			.join("; ");
+	}
+
 	/**
 	 *
 	 * 编辑节点
@@ -218,9 +248,32 @@ export const useRendererDataHook = function () {
 		setcurrentSettingNode(null);
 	};
 
+	/**
+	 * 更换节点里的所有的id
+	 */
+	const changeNodeId = function (node: ITreeNode) {
+		node.nodeid = newGuid();
+		if (typeof node.children !== "undefined" && node.children !== null && node.children.length !== 0) {
+			for (let item of node.children) {
+				item = changeNodeId(item);
+			}
+		}
+		return node;
+	};
+
 	//拖拽开始事件
-	const onDragStart = function (node: ITreeNode, path: number[] | null, action?: "copy"): void {
-		if (typeof action !== "undefined" && action === "copy") {
+	const onDragStart = function (node: ITreeNode, path: number[] | null, action?: "copy" | "collectedItemDrag", classes?: string): void {
+		//如果是从收藏夹里拉出来的节点
+		if (typeof action !== "undefined" && action === "collectedItemDrag") {
+			let newNode = structuredClone(node);
+			//将node里的所有的id都换掉
+			node = changeNodeId(newNode);
+			node.nodeid = "";
+			node.isTached = false;
+			setcurrentDraggingNode(newNode);
+			setcurrentDraggingNodePath(null);
+			setcurrentdraggingNodeClasses(classes);
+		} else if (typeof action !== "undefined" && action === "copy") {
 			let newNode = structuredClone(node);
 			newNode.nodeid = "";
 			newNode.isTached = false;
@@ -400,6 +453,17 @@ export const useRendererDataHook = function () {
 			}
 			setdragEndPosition({ x: currentMousePosition.x - 80, y: currentMousePosition.y - 80 });
 			renderTreeObj.setsaveTreeCommandStamp(Date.now());
+			//如果当前拖拽节点的样式不为空
+			//就将样式置入到当前样式表里去
+			if (currentdraggingNodeClasses !== "") {
+				(async function () {
+					let classes = currentdraggingNodeClasses;
+					let _currentScssCode = currentScssCode;
+					setcurrentScssCode(await formatScssCode(_currentScssCode + "  \n" + classes));
+					setcurrentdraggingNodeClasses("");
+					toast.success("收藏的节点已放置到页面上，连同收藏的css代码也被放置在了当前页面的scss中，请确认样式名是否需要更新！");
+				})();
+			}
 		} else {
 			//没有插入，将节点放回原来的位置
 			setdragEndPosition({ ...dragBPosition });
@@ -557,6 +621,138 @@ export const useRendererDataHook = function () {
 		return resultElementContainer[0];
 	};
 
+	/**
+	 * 获得样式
+	 * @param classNames
+	 * @returns
+	 */
+	const getClassValue = function (classNames: string[]): string {
+		const result: string[] = [];
+
+		// 遍历所有样式表
+		for (const sheet of (document as any).styleSheets) {
+			let rules: CSSRuleList;
+
+			try {
+				rules = sheet.cssRules;
+			} catch (e) {
+				// 避免跨域或 blob 类型样式表报错
+				continue;
+			}
+
+			for (const rule of rules as any) {
+				if (rule.type === CSSRule.STYLE_RULE) {
+					const selector = (rule as CSSStyleRule).selectorText;
+
+					// 检查是否匹配我们关心的类名
+					for (const cls of classNames) {
+						if (selector.includes(`.${cls}`)) {
+							result.push(rule.cssText);
+						}
+					}
+				}
+			}
+		}
+
+		return result.join("\n");
+	};
+
+	/* 查看已经收藏的节点的渲染树 */
+	const watchCollectedNode = async function (item: IcollectingItem) {
+		settempNodeRendererTree(JSON.stringify(item.node, null, 4));
+		settempNodecssstyle(await formatScssCode(item.classes));
+		setisopenNoderenderertree(true);
+	};
+
+	/* 查看任意节点的渲染树 */
+	const watchNode = async function (path: number[]) {
+		//找到当前节点
+		let node = structuredClone(renderTreeObj.findNodeByPath(renderTreeObj.renderTree, path));
+		let classNameArr = [];
+		let findClasses = function (node: ITreeNode) {
+			if (typeof node.props.className !== "undefined") {
+				classNameArr.push(node.props.className);
+			}
+			if (typeof node.children !== "undefined" && node.children !== null && node.children.length !== 0) {
+				for (let item of node.children) {
+					findClasses(item);
+				}
+			}
+		};
+		findClasses(node);
+		//找到属于这些结构所有的css代码
+		let css = getClassValue(classNameArr);
+		//将隔离样式名去掉
+		css = css.replace(new RegExp(`\\${scssComplierStylesiclutionName}`, "g"), "");
+
+		settempNodeRendererTree(JSON.stringify(node, null, 4));
+		settempNodecssstyle(await formatScssCode(css));
+		setisopenNoderenderertree(true);
+	};
+
+	/**
+	 * 收藏节点
+	 */
+	const collectNode = async function (path: number[], name: string) {
+		//找到当前节点
+		let node = structuredClone(renderTreeObj.findNodeByPath(renderTreeObj.renderTree, path));
+		let classNameArr = [];
+		let findClasses = function (node: ITreeNode) {
+			if (typeof node.props.className !== "undefined") {
+				classNameArr.push(node.props.className);
+			}
+			if (typeof node.children !== "undefined" && node.children !== null && node.children.length !== 0) {
+				for (let item of node.children) {
+					findClasses(item);
+				}
+			}
+		};
+		findClasses(node);
+		//找到属于这些结构所有的css代码
+		let css = getClassValue(classNameArr);
+		//将隔离样式名去掉
+		css = css.replace(new RegExp(`\\${scssComplierStylesiclutionName}`, "g"), "");
+		let _collectedNodes: IcollectingItem[] = (await new Promise(function (_res) {
+			setcollectedNodes(function (_v) {
+				_res(JSON.parse(_v));
+				return _v;
+			});
+		})) as IcollectingItem[];
+		/* 查下重 */
+		for (let citem of _collectedNodes) {
+			if (citem.node.label === name) {
+				toast.error(`名称${name}已经存在，请重新命名！`);
+				return false;
+			}
+		}
+		node.label = name;
+		_collectedNodes.unshift({
+			node: node,
+			classes: css,
+		});
+
+		setcollectedNodes(JSON.stringify(_collectedNodes));
+		toast.success(`节点收藏成功!`);
+		return true;
+	};
+
+	/* 删除收藏的节点 */
+	const deleteCollectedNode = async function (node: ITreeNode) {
+		let _collectedNodes: IcollectingItem[] = (await new Promise(function (_res) {
+			setcollectedNodes(function (_v) {
+				_res(JSON.parse(_v));
+				return _v;
+			});
+		})) as IcollectingItem[];
+		let new_collectedNodes = [];
+		for (let citem of _collectedNodes) {
+			if (citem.node.label !== node.label) {
+				new_collectedNodes.push(citem);
+			}
+		}
+		setcollectedNodes(JSON.stringify(new_collectedNodes));
+	};
+
 	/* 全局快捷键处理器 */
 	const globalSnapshotHandler = (e: KeyboardEvent) => {
 		if ((e.metaKey || e.ctrlKey) && e.key === "s") {
@@ -624,7 +820,7 @@ export const useRendererDataHook = function () {
 	};
 
 	const scsscompile = function () {
-		compileStringAsync(`.bobliao_lc_editor_main_content_root{
+		compileStringAsync(`${scssComplierStylesiclutionName}{
 				${currentScssCode}
 			}`)
 			.then((result) => {
@@ -633,6 +829,16 @@ export const useRendererDataHook = function () {
 			.catch(function (_e) {
 				toast.error("SCSS编译错误:", _e.message);
 			});
+	};
+
+	/**
+	 * 格式化 scss 代码
+	 */
+	const formatScssCode = async (code: string): Promise<string> => {
+		return prettier.format(code, {
+			parser: "scss", // ✅ 关键点！
+			plugins: [parserScss],
+		});
 	};
 
 	//===============effects==================
@@ -772,6 +978,30 @@ export const useRendererDataHook = function () {
 		/* 当前需要注入到页面内的css内容(用于预览 ) */
 		currentInjectCssContent,
 		setcurrentInjectCssContent,
+		styleObjectToString,
+		formatScssCode,
+		/* 收藏节点 */
+		collectNode,
+		/* 收藏节点列表 */
+		collectedNodes,
+		/* 收藏的组件篮子 */
+		isopenCollectedBucket,
+		setisopenCollectedBucket,
+		/* 删除收藏的组件 */
+		deleteCollectedNode,
+		/* 节点渲染树查看 */
+		tempNodeRendererTree,
+		settempNodeRendererTree,
+		/* 节点当前的css样式 */
+		tempNodecssstyle,
+		settempNodecssstyle,
+		/* 查看已经收藏的节点的渲染树 */
+		watchCollectedNode,
+		/* 查看任意节点的渲染树 */
+		watchNode,
+		/* 渲染树窗口 */
+		isopenNoderenderertree,
+		setisopenNoderenderertree,
 	};
 };
 

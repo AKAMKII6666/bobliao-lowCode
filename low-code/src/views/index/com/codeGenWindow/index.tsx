@@ -94,7 +94,7 @@ const CodeGenWindow: FC<iprops> = ({}, _ref): ReactElement => {
 							}}
 						>
 							<CodeIcon></CodeIcon>
-							<span>配置树</span>
+							<span>渲染树</span>
 						</div>
 					</div>
 				}
@@ -119,7 +119,7 @@ const CodeGenWindow: FC<iprops> = ({}, _ref): ReactElement => {
 								<div className={styles.left}>
 									<Editor
 										height="100%" // By default, it fully fits with its parent
-										theme="light"
+										theme="vs-dark"
 										language={"tsx"}
 										loading={<Loading></Loading>}
 										value={code}
@@ -167,7 +167,7 @@ const CodeGenWindow: FC<iprops> = ({}, _ref): ReactElement => {
 					return (
 						<Editor
 							height="100%"
-							theme="light"
+							theme="vs-dark"
 							language="json"
 							loading={<Loading />}
 							value={config}
