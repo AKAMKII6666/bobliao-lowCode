@@ -91,6 +91,8 @@ export const useRendererDataHook = function () {
 
 	/* 节点渲染树查看 */
 	const [tempNodeRendererTree, settempNodeRendererTree] = useState<string>("");
+	/* 当前正在查看的节点路径 */
+	const [currentWarchingNodePath, setcurrentWarchingNodePath] = useState<number[]>([]);
 	/* 节点当前的css样式 */
 	const [tempNodecssstyle, settempNodecssstyle] = useState<string>("");
 	/* 是否打开节点渲染树查看 */
@@ -259,6 +261,25 @@ export const useRendererDataHook = function () {
 			}
 		}
 		return node;
+	};
+
+	/**
+	 * 导入渲染树
+	 * @param tree 导入的渲染树文本
+	 */
+	const inputRenderertree = async function (tree: string) {
+		try {
+			//将导入的树文本转换为对象
+			let _tempTree = JSON.parse(tree);
+			let node = changeNodeId(_tempTree.node);
+			renderTreeObj.addNode(currentWarchingNodePath, node);
+			setcurrentScssCode(await formatScssCode(currentScssCode + "  \n" + _tempTree.classes));
+			setisopenNoderenderertree(false);
+			toast.success("导入渲染树成功！");
+		} catch (e) {
+			toast.error("导入渲染树失败，请检查渲染树文本是否正确！");
+			toast.error(e.message);
+		}
 	};
 
 	//拖拽开始事件
@@ -688,6 +709,7 @@ export const useRendererDataHook = function () {
 		settempNodeRendererTree(JSON.stringify(node, null, 4));
 		settempNodecssstyle(await formatScssCode(css));
 		setisopenNoderenderertree(true);
+		setcurrentWarchingNodePath([...path]);
 	};
 
 	/**
@@ -1002,6 +1024,11 @@ export const useRendererDataHook = function () {
 		/* 渲染树窗口 */
 		isopenNoderenderertree,
 		setisopenNoderenderertree,
+		/* 当前正在查看的节点路径 */
+		currentWarchingNodePath,
+		setcurrentWarchingNodePath,
+		/* 导入渲染树 */
+		inputRenderertree,
 	};
 };
 

@@ -24,12 +24,16 @@ const WatchRenderertreeWindow: FC<iprops> = ({}, _ref): ReactElement => {
 
 	//===============state====================
 	const [isMounted, setIsMounted] = useState<boolean>(false);
+	const [renderertreeTextnput, setRenderertreeTextnput] = useState<string>("");
 
 	//===============static===================
 
 	//===============ref======================
 
 	//===============function=================
+	const importRenderertree = function () {
+		renderData.inputRenderertree(renderertreeTextnput);
+	};
 
 	//===============effects==================
 	useEffect(
@@ -73,6 +77,16 @@ const WatchRenderertreeWindow: FC<iprops> = ({}, _ref): ReactElement => {
 				}}
 			>
 				<>
+					<textarea
+						className={styles.import}
+						value={renderertreeTextnput}
+						onChange={function (e) {
+							setRenderertreeTextnput(e.target.value);
+						}}
+					></textarea>
+					<div className={styles.importTitle} onClick={importRenderertree}>
+						导入渲染树
+					</div>
 					<textarea
 						className={styles.export}
 						value={JSON.stringify(
