@@ -16,6 +16,7 @@ import GridViewIcon from "@mui/icons-material/GridView";
 import toast from "react-hot-toast";
 import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 
 /**
  * 传入参数
@@ -275,6 +276,42 @@ const EditorDocker: FC<iprops> = ({}, _ref): ReactElement => {
 											}}
 										>
 											<CollectionsBookmarkIcon></CollectionsBookmarkIcon>
+										</div>
+									</Tooltip>
+								</>
+							);
+						})()}
+
+						{/* 树形列表 */}
+						{(function () {
+							if (rendererData.mouseMode === "none") {
+								return null;
+							}
+							return (
+								<>
+									<Tooltip
+										title={"渲染树（元素列表）"}
+										classes={{
+											tooltip: styles.tip,
+										}}
+										followCursor={true}
+									>
+										<div
+											className={
+												styles.blockIcon +
+												" " +
+												(function () {
+													if (rendererData.isopenTreeViewer) {
+														return styles.selected;
+													}
+													return "";
+												})()
+											}
+											onClick={function () {
+												rendererData.setisopenTreeViewer(!rendererData.isopenTreeViewer);
+											}}
+										>
+											<AccountTreeIcon></AccountTreeIcon>
 										</div>
 									</Tooltip>
 								</>

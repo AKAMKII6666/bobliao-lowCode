@@ -1,0 +1,257 @@
+/**
+ * 廖力编写
+ * 模块名称：树形查看器样式
+ * 模块说明：树形列表查看器的样式定义
+ * 编写时间：2025年1月
+ */
+
+/* 树形查看器容器 */
+.treeViewerContainer {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: #ffffff;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+/* 树形查看器头部 */
+.treeViewerHeader {
+	padding: 16px 20px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	border-bottom: 1px solid #e1e5e9;
+
+	h3 {
+		margin: 0 0 4px 0;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0;
+		font-size: 12px;
+		opacity: 0.9;
+	}
+}
+
+/* 树形查看器内容区域 */
+.treeViewerContent {
+	flex: 1;
+
+	overflow-y: auto;
+	background-color: #f8f9fa;
+
+	/* 树形列表容器 */
+	.treeListContainer {
+		overflow: hidden;
+	}
+
+	/* 树节点项 */
+	.treeNodeItem {
+		display: flex;
+		align-items: center;
+		padding: 6px 12px;
+		border-bottom: 1px solid #f0f0f0;
+		transition: all 0.2s ease;
+		cursor: pointer;
+		white-space: nowrap;
+		overflow: hidden;
+		position: relative;
+
+		&:hover {
+			background-color: #e3f2fd;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			transform: translateY(-1px);
+			border-radius: 4px;
+			margin: 1px 2px;
+		}
+
+		&:active {
+			transform: translateY(0px);
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		/* 节点展开/折叠图标 */
+		.treeNodeToggle {
+			width: 16px;
+			height: 16px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-start;
+			margin-right: 6px;
+			flex-shrink: 0;
+			margin-left: 16px;
+
+			.toggleIcon {
+				font-size: 10px;
+				color: #666;
+				transition: all 0.2s ease;
+			}
+
+			.toggleIconExpanded {
+				font-size: 10px;
+				color: #666;
+				transition: all 0.2s ease;
+			}
+
+			.toggleIconPlaceholder {
+				font-size: 12px;
+				color: #ccc;
+			}
+		}
+
+		/* hover状态下的图标效果 */
+		&:hover {
+			.treeNodeToggle {
+				.toggleIcon {
+					color: #1976d2;
+					transform: scale(1.1);
+				}
+
+				.toggleIconExpanded {
+					color: #1976d2;
+					transform: scale(1.1);
+				}
+
+				.toggleIconPlaceholder {
+					color: #999;
+				}
+			}
+
+			.nodeMainInfo {
+				.nodeName {
+					color: #1976d2;
+				}
+
+				.nodeLabel {
+					color: #1976d2;
+				}
+
+				.nodeId {
+					color: #666;
+				}
+			}
+		}
+
+		/* 节点类型标识 */
+		.nodeTypeBadge {
+			padding: 1px 4px;
+			border-radius: 3px;
+			font-size: 9px;
+			font-weight: 500;
+			margin-right: 6px;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			flex-shrink: 0;
+
+			&.nodeTypeLayout {
+				background-color: #e3f2fd;
+				color: #1976d2;
+			}
+
+			&.nodeTypeComponent {
+				background-color: #f3e5f5;
+				color: #7b1fa2;
+			}
+
+			&.nodeTypeDefault {
+				background-color: #f5f5f5;
+				color: #666;
+			}
+		}
+
+		/* 节点主要信息 */
+		.nodeMainInfo {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			min-width: 0; /* 允许flex子项收缩 */
+			overflow: hidden;
+
+			.nodeName {
+				font-weight: 600;
+				color: #333;
+				font-size: 13px;
+				flex-shrink: 0;
+				transition: color 0.2s ease;
+			}
+
+			.nodeLabel {
+				color: #666;
+				font-size: 11px;
+				flex-shrink: 0;
+				transition: color 0.2s ease;
+			}
+
+			.nodeId {
+				color: #999;
+				font-size: 10px;
+				font-family: monospace;
+				flex-shrink: 0;
+				transition: color 0.2s ease;
+			}
+
+			/* 子节点数量 - 移到同一行 */
+			.childrenCount {
+				font-size: 10px;
+				color: #999;
+				background-color: #f0f0f0;
+				padding: 1px 4px;
+				border-radius: 8px;
+				flex-shrink: 0;
+			}
+		}
+	}
+
+	/* 子节点容器 */
+	.treeChildren {
+		margin-left: 0;
+	}
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+	.treeViewerHeader {
+		padding: 12px 16px;
+
+		h3 {
+			font-size: 16px;
+		}
+
+		p {
+			font-size: 11px;
+		}
+	}
+
+	.treeViewerContent {
+		padding: 12px;
+
+		.tree-node-item {
+			padding: 6px 8px;
+
+			.node-main-info {
+				gap: 4px;
+
+				.node-name {
+					font-size: 13px;
+				}
+
+				.node-label {
+					font-size: 11px;
+				}
+
+				.node-id {
+					font-size: 10px;
+				}
+			}
+		}
+	}
+}

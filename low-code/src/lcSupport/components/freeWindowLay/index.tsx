@@ -333,7 +333,15 @@ const FreeWindow: FC<IFreeWindowProps> = (
 								}}
 								ref={freeWindowRef}
 								className={styles.freeWindow}
-								style={{ ...currentListeningRect, ...style }}
+								style={{
+									...{
+										width: currentListeningRect.width + "px",
+										height: currentListeningRect.height + "px",
+										left: currentListeningRect.left + "px",
+										top: currentListeningRect.top + "px",
+									},
+									...style,
+								}}
 							>
 								<div
 									className={styles.title}

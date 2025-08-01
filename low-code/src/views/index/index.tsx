@@ -21,6 +21,7 @@ import ScssEditor from "./com/scssEditor";
 import CollectNodeList from "./com/collectedNodeList";
 import WatchRenderertreeWindow from "./com/watchRenderertreeWindow";
 import LayoutGenLay from "./com/layoutGenLay";
+import TreeViewer from "./com/treeviewer";
 /**
  * 传入参数
  */
@@ -95,6 +96,9 @@ const Insider: FC<iprops> = ({}): ReactElement => {
 				}
 				return null;
 			})()}
+
+			{/* 树形列表查看器 */}
+			<TreeViewer></TreeViewer>
 		</>
 	);
 };
