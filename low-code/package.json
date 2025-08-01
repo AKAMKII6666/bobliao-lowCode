@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "cross-env API_MODE=development_proxy webpack serve --config ./webpackConfig/webpack.config.dev.js --hot --progress",
+		"dev": "cross-env API_MODE=development webpack serve --config ./webpackConfig/webpack.config.dev.js --hot --progress",
 		"build": "cross-env API_MODE=production webpack --config ./webpackConfig/webpack.config.pro.js --progress",
 		"start:web": "serve -s ./webProdBuild -p 8808",
-		"rs:dev": "cross-env API_MODE=development_proxy rspack dev --config ./rspackConfig/rspack.config.js",
+		"rs:dev": "cross-env API_MODE=development rspack dev --config ./rspackConfig/rspack.config.js",
 		"rs:build": "cross-env API_MODE=production rspack build --config ./rspackConfig/rspack.config.js",
 		"buildAndDeploy": "cross-env API_MODE=production webpack --config ./webpackConfig/webpack.config.pro.js --progress && npx wrangler pages deploy ./dist",
 		"deployPages": "npx wrangler pages deploy ./dist"
@@ -24,6 +24,7 @@
 		"@hookform/resolvers": "^3.3.0",
 		"@monaco-editor/react": "^4.7.0",
 		"@mui/icons-material": "5.14.18",
+		"@mui/joy": "^5.0.0-beta.52",
 		"@mui/lab": "5.0.0-alpha.153",
 		"@mui/material": "5.14.18",
 		"@mui/styles": "5.14.18",
@@ -49,6 +50,7 @@
 		"formik": "2.4.3",
 		"framer-motion": "^10.16.1",
 		"immer": "^10.1.1",
+		"jsonrepair": "^3.13.0",
 		"jwt-decode": "^3.1.2",
 		"lodash": "^4.17.21",
 		"material-ui-popup-state": "^5.0.9",

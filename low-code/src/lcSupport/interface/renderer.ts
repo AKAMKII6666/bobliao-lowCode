@@ -29,3 +29,13 @@ export interface IcollectingItem {
 	node: ITreeNode;
 	classes: string;
 }
+
+/* 用户和机器人聊天的对话项 */
+export interface IchatItem {
+	/* 用户发言 */
+	user: string;
+	/* 机器人回复 */
+	robot: string;
+	/* 发言时间 */
+	date: number;
+}

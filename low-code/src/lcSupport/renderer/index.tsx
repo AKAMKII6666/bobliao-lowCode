@@ -9,7 +9,7 @@ import React, { createContext, useState, useContext, useEffect, ReactElement, FC
 import useRenderTreeHook from "../renderTreeController/renderTreeHook";
 import { ICommonInqueryitempropsWithoutYup, ITreeNode, TNodeType } from "../interface/ItreeNode";
 import { ComponentNameMap } from "../lcsUtils";
-import { coordXY, IcollectingItem, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
+import { coordXY, IchatItem, IcollectingItem, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
 import { Immer, produce } from "immer";
 import { newGuid } from "MithalCommonLibrary/utils/utils";
 import useJquery from "@bobliao/use-jquery-hook";
@@ -24,6 +24,8 @@ import useDebounce from "MithalCommonLibrary/utils/debounceHook";
 import { compileStringAsync } from "sass";
 import prettier from "prettier/standalone";
 import parserScss from "prettier/plugins/postcss";
+import { Api_generateLayout, Api_generateLayoutWithChatGPT } from "../ajax/bot";
+import { jsonrepair } from "jsonrepair";
 
 //定义勾子的返回类型
 export type TRendererHookReturnType = ReturnType<typeof useRendererDataHook>;
@@ -177,6 +179,14 @@ export const useRendererDataHook = function () {
 		},
 	]);
 
+	/* 是否正在生成内容（是否正在进行布局生成） */
+	const [isGeneratingContent, setisGeneratingContent] = useState<boolean>(false);
+	/* 正在生成的内容  */
+	const [generatingContent, setgeneratingContent] = useState<string>("");
+	const [userInput, setuserInput] = useState<string>("");
+	/* 用户和机器人聊天的对话历史 */
+	const [chatHistory, setchatHistory] = useLocalStorage<IchatItem[]>("_b_b_chatHistory_", []);
+
 	//===============static===================
 	/* scss编译时的隔离样式名 */
 	const scssComplierStylesiclutionName = ".bobliao_lc_editor_main_content_root";
@@ -209,6 +219,9 @@ export const useRendererDataHook = function () {
 		},
 	});
 
+	/* 是否打开树列表（用于展示渲染树） */
+	const [isopenTreeViewer, setisopenTreeViewer] = useState<boolean>(false);
+
 	//===============ref======================
 	//当鼠标放在warpper的事件div上时,或者右键选中该div时，或者抓起组件即将放下时，获得的节点路径链上的信息
 	const warpperDivChainRef = useRef<warpperDivObj[]>([]);
@@ -219,7 +232,50 @@ export const useRendererDataHook = function () {
 		y: 0,
 	});
 
+	/* 当前的生成布局的controller(用于中断操作 ) */
+	const currentGenerateLayoutControllerRef = useRef<AbortController | null>(null);
+	/* 当前的生成布局的请求id */
+	const currentAIResponce = useRef<string>("");
+
 	//===============function=================
+
+	/* 生成布局 */
+	async function generateLayout(content: string, path: number[]) {
+		currentAIResponce.current = "";
+		setgeneratingContent("");
+		setisGeneratingContent(true);
+		setuserInput(content);
+		setcurrentWarchingNodePath(path);
+		/* 直接发送请求请求生成布局 */
+		//let controller = await Api_generateLayout(
+		let controller = await Api_generateLayoutWithChatGPT(
+			content,
+			(content) => {
+				setgeneratingContent(content);
+				currentAIResponce.current = content;
+			},
+			() => {
+				setisGeneratingContent(false);
+				completeGenerateLayout();
+			}
+		);
+		currentGenerateLayoutControllerRef.current = controller;
+	}
+
+	/* 停止生成布局 */
+	function stopGenerateLayout() {
+		if (currentGenerateLayoutControllerRef.current) {
+			currentGenerateLayoutControllerRef.current.abort();
+			setisGeneratingContent(false);
+		}
+	}
+
+	/* 完成布局生成 */
+	function completeGenerateLayout() {
+		let result = currentAIResponce.current.match(/\{[\s\S]*\}/);
+		let jsonstr = jsonrepair(result ? result[0] : "");
+		inputRenderertree(jsonstr);
+	}
 
 	function camelToKebab(str: string) {
 		return str.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
@@ -273,7 +329,9 @@ export const useRendererDataHook = function () {
 			let _tempTree = JSON.parse(tree);
 			let node = changeNodeId(_tempTree.node);
 			renderTreeObj.addNode(currentWarchingNodePath, node);
-			setcurrentScssCode(await formatScssCode(currentScssCode + "  \n" + _tempTree.classes));
+			if (_tempTree.classes) {
+				setcurrentScssCode(await formatScssCode(currentScssCode + "  \n" + _tempTree.classes));
+			}
 			setisopenNoderenderertree(false);
 			toast.success("导入渲染树成功！");
 		} catch (e) {
@@ -1029,6 +1087,23 @@ export const useRendererDataHook = function () {
 		setcurrentWarchingNodePath,
 		/* 导入渲染树 */
 		inputRenderertree,
+		/* 生成布局 */
+		generateLayout,
+		/* 停止生成布局 */
+		stopGenerateLayout,
+		/* 用户输入 */
+		userInput,
+		/* 是否正在生成布局 */
+		isGeneratingContent,
+		/* 设置是否正在生成布局 */
+		setisGeneratingContent,
+		/* 正在生成的内容 */
+		generatingContent,
+		/* 设置正在生成的内容 */
+		setgeneratingContent,
+		/* 是否打开树列表 */
+		isopenTreeViewer,
+		setisopenTreeViewer,
 	};
 };
 

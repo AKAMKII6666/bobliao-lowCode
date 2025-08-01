@@ -13,6 +13,7 @@ import { produce } from "immer";
 import useJquery from "@bobliao/use-jquery-hook";
 import { Tooltip } from "@mui/material";
 import { IcollectingItem } from "renderer/lcSupport/interface/renderer";
+import { SYS_APIMODE } from "renderer/config";
 
 /**
  * 传入参数
@@ -72,16 +73,26 @@ const LayoutListWarpper: FC<iprops> = ({ item }): ReactElement => {
 						r
 					</div>
 				</Tooltip>
-				<Tooltip title={"获取此项渲染树"}>
-					<div
-						className={styles.watch}
-						onClick={function () {
-							rendererData.watchCollectedNode(item);
-						}}
-					>
-						b
-					</div>
-				</Tooltip>
+				{(function () {
+					if (SYS_APIMODE === "development") {
+						return (
+							<>
+								<Tooltip title={"获取此项渲染树"}>
+									<div
+										className={styles.watch}
+										onClick={function () {
+											rendererData.watchCollectedNode(item);
+										}}
+									>
+										b
+									</div>
+								</Tooltip>
+							</>
+						);
+					}
+					return null;
+				})()}
+
 				<div
 					className={styles.eventCover}
 					onDrag={function (_e) {

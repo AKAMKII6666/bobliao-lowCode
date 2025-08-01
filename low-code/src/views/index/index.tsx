@@ -20,6 +20,7 @@ import NodeEditArea from "./com/nodeEditArea";
 import ScssEditor from "./com/scssEditor";
 import CollectNodeList from "./com/collectedNodeList";
 import WatchRenderertreeWindow from "./com/watchRenderertreeWindow";
+import LayoutGenLay from "./com/layoutGenLay";
 /**
  * 传入参数
  */
@@ -86,6 +87,14 @@ const Insider: FC<iprops> = ({}): ReactElement => {
 			<PropsEditor></PropsEditor>
 			{/* scss编辑器 */}
 			<ScssEditor></ScssEditor>
+
+			{/* 布局生成窗口 */}
+			{(function () {
+				if (renderData.isGeneratingContent) {
+					return <LayoutGenLay></LayoutGenLay>;
+				}
+				return null;
+			})()}
 		</>
 	);
 };

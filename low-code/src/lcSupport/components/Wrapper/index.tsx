@@ -22,6 +22,8 @@ import { Irectinfo } from "MithalCommonLibrary/formComponentsContainer";
 import { ICommonInqueryitemprops, ICommonInqueryprops } from "MithalCommonLibrary/CommonInquery";
 import ErrorBoundary from "../ErrorBoundary";
 import { newGuid } from "MithalCommonLibrary/utils/utils";
+import ChatWindow from "./com/ChatWindow";
+import { SYS_APIMODE } from "renderer/config";
 
 /**
  * 传入参数
@@ -60,6 +62,16 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		top: 0,
 	});
 
+	/* 是否打开了布局生成对话窗口 */
+	const [isOpenChatWindow, setisOpenChatWindow] = useState<boolean>(false);
+	/* 当前用户输入的布局生成内容 */
+	const [chatInputContent, setchatInputContent] = useState<string>("");
+	/* 当前窗口点击的位置 */
+	const [chatWindowPosition, setchatWindowPosition] = useState<coordXY>({
+		x: 0,
+		y: 0,
+	});
+
 	//===============static===================
 	//父节点的路径
 	const parentNodePath = [...pathArray];
@@ -83,6 +95,12 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			return "0";
 		}
 		return obj;
+	};
+
+	/* 提交布局生成 */
+	const submitLayout = function () {
+		setisOpenChatWindow(false);
+		rendererDataHook.generateLayout(chatInputContent, pathArray);
 	};
 
 	//获得当前warpperdiv标题的left
@@ -1110,23 +1128,63 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 														}}
 													></div>
 												</Tooltip>
+												{(function () {
+													if (SYS_APIMODE === "development") {
+														return (
+															<>
+																<span></span>
+																<Tooltip
+																	title="查看渲染树"
+																	placement="right"
+																	classes={{
+																		tooltip: styles.tpaaaaaaaaaaaaaa,
+																	}}
+																	followCursor={true}
+																>
+																	<div
+																		className={styles.icon + " " + styles.icon8}
+																		onClick={function (_e) {
+																			rendererDataHook.watchNode(pathArray);
+																		}}
+																	></div>
+																</Tooltip>
+															</>
+														);
+													}
+													return null;
+												})()}
+
 												<span></span>
-												<Tooltip
-													title="查看渲染树"
-													placement="right"
-													classes={{
-														tooltip: styles.tpaaaaaaaaaaaaaa,
-													}}
-													followCursor={true}
-												>
-													<div
-														className={styles.icon + " " + styles.icon8}
-														onClick={function (_e) {
-															rendererDataHook.watchNode(pathArray);
-														}}
-													></div>
-												</Tooltip>
-												<span></span>
+												{(function () {
+													if (node.nodetype === "layout") {
+														return (
+															<>
+																<Tooltip
+																	title="使用BobBot生成布局"
+																	placement="right"
+																	classes={{
+																		tooltip: styles.tpaaaaaaaaaaaaaa,
+																	}}
+																	followCursor={true}
+																>
+																	<div
+																		className={styles.icon + " " + styles.icon9}
+																		onClick={function (_e) {
+																			rendererDataHook.setcurrentWarchingNodePath([...pathArray]);
+																			setisOpenChatWindow(true);
+																			setchatWindowPosition({
+																				x: _e.clientX,
+																				y: _e.clientY,
+																			});
+																		}}
+																	></div>
+																</Tooltip>
+																<span></span>
+															</>
+														);
+													}
+													return null;
+												})()}
 												<Tooltip
 													title="删除节点"
 													placement="right"
@@ -1300,6 +1358,17 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 					iscustomHover,
 					rendererDataHook.isEnterWarpper,
 				]
+			)}
+			{/* 布局生成的聊天窗口 */}
+			{isOpenChatWindow && (
+				<ChatWindow
+					isOpen={isOpenChatWindow}
+					setisOpen={setisOpenChatWindow}
+					chatInputContent={chatInputContent}
+					setchatInputContent={setchatInputContent}
+					chatWindowPosition={chatWindowPosition}
+					submitLayout={submitLayout}
+				/>
 			)}
 		</>
 	);

@@ -1,0 +1,65 @@
+.background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #ffffffbf;
+	z-index: 210;
+	backdrop-filter: blur(8.3px);
+
+	.maincontainer {
+		width: 890px;
+		margin: 0 auto;
+		background-color: transparent;
+		padding: 1px;
+		.headTitle {
+			font-size: 40px;
+			text-align: center;
+			color: #000;
+			margin: auto;
+			margin-top: 72px;
+		}
+	}
+
+	.userInput,
+	.aiResult {
+		margin-top: 49px;
+		border: 1px solid #00000061;
+		border-radius: 8px;
+		padding: 16px;
+		overflow: hidden;
+		overflow-y: auto;
+
+		.userInputContent {
+			text-indent: 38px;
+		}
+	}
+	.aiResult {
+		width: 890px;
+		margin: auto;
+		margin-top: 20px;
+	}
+
+	.stopButtonContainer {
+		margin-top: 14px;
+		text-align: center;
+	}
+	.stopButton {
+		background-color: #000;
+		color: #fff;
+		font-size: 14px;
+		height: 38px;
+		line-height: 38px;
+		padding: 0 16px 0 0;
+		border-radius: 8px;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+
+		svg {
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+	}
+}
