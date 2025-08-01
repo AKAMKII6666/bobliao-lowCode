@@ -7,6 +7,7 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, FC, ReactElement } from "react";
 import { ITreeNode } from "../../../../../lcSupport/interface/ItreeNode";
 import styles from "../index.module.scss";
+import { useRendererDataContext } from "../../../../../lcSupport/renderer";
 /**
  * 传入参数
  */
@@ -35,12 +36,21 @@ export interface ITreeNodeItemProps {
 
 const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, onToggleExpand }): ReactElement => {
 	//===============useHooks=================
+	/**
+	 * 获取渲染器数据上下文
+	 */
+	const renderData = useRendererDataContext();
 
 	//===============state====================
 	/**
 	 * 组件挂载状态
 	 */
 	const [isMounted, setIsMounted] = useState<boolean>(false);
+
+	/**
+	 * 当前是否被hover状态
+	 */
+	const [isHovered, setIsHovered] = useState<boolean>(false);
 
 	//===============static===================
 
@@ -97,6 +107,20 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 		if (node.children && node.children.length > 0) {
 			onToggleExpand(path);
 		}
+	};
+
+	/**
+	 * 处理鼠标进入事件
+	 */
+	const handleMouseEnter = () => {
+		renderData.handleTreeNodeHover(path, true);
+	};
+
+	/**
+	 * 处理鼠标离开事件
+	 */
+	const handleMouseLeave = () => {
+		renderData.handleTreeNodeHover(null, false);
 	};
 
 	/**
@@ -160,8 +184,26 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 		};
 	}, []);
 
+	/**
+	 * 监听renderer中的hover状态变化
+	 * 当Wrapper被hover时，TreeNodeItem也应该显示hover效果
+	 */
+	useEffect(() => {
+		if (renderData.hoveredTreeNodePath && renderData.hoveredTreeNodePath.join("") === path.join("")) {
+			setIsHovered(true);
+		} else if (renderData.hoveredTreeNodePath === null || renderData.hoveredTreeNodePath.join("") !== path.join("")) {
+			setIsHovered(false);
+		}
+	}, [renderData.hoveredTreeNodePath, path]);
+
 	return (
-		<div className={`${styles.treeNodeItem} ${styles[getNodeTypeClassName(node.nodetype)]}`} style={getIndentStyle(level)} onClick={handleToggleClick}>
+		<div
+			className={`${styles.treeNodeItem} ${styles[getNodeTypeClassName(node.nodetype)]} ${isHovered ? styles.treeNodeItemHovered : ""}`}
+			style={getIndentStyle(level)}
+			onClick={handleToggleClick}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+		>
 			{/* 节点展开/折叠图标 */}
 			<div className={styles.treeNodeToggle}>{renderToggleIcon()}</div>
 

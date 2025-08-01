@@ -31,7 +31,7 @@ import { SYS_APIMODE } from "renderer/config";
 export interface IWrapperProps {
 	node: ITreeNode;
 	pathArray: number[];
-	setHover?: (val: boolean) => void;
+	setHover?: (val: boolean, a?: boolean, b?: boolean) => void;
 }
 
 //往外面暴露统一名称的属性对象，用于生成低代码平台属性JSON schema
@@ -161,10 +161,11 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 	};
 
 	//接收子组件传来的hover状态，并向上传递
-	const forChildSetHover = function (value: boolean, isCurrent?: boolean | undefined) {
+	const forChildSetHover = function (value: boolean, isCurrent?: boolean | undefined, forceUpdate?: boolean) {
 		if (typeof setHover === "function") {
-			setHover(value);
+			setHover(value, undefined, forceUpdate);
 		}
+
 		if (typeof isCurrent === "undefined") {
 			isCurrentHoverRef.current = value;
 		}
@@ -197,6 +198,10 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			}, [] as warpperDivObj[]);
 		}
 		if (node.name === "PageRoot") {
+			rendererDataHook.setwarpperhoverStateUpdateStamp(+new Date());
+		}
+
+		if (forceUpdate) {
 			rendererDataHook.setwarpperhoverStateUpdateStamp(+new Date());
 		}
 	};
@@ -671,6 +676,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		}
 		rendererDataHook.setisOpenWarpperRightMenu(true);
 		rendererDataHook.setcurrentMenuNodeObj(parent);
+		if (rendererDataHook.isopenTreeViewer) {
+			rendererDataHook.handleTreeNodeHover(parentNodePath, true);
+		}
 		forChildSetHover(false, true);
 	};
 
@@ -809,6 +817,28 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		},
 		[isMounted]
 	);
+
+	/**
+	 * 监听树节点hover状态变化
+	 * 当TreeNodeItem被hover时，触发Wrapper的hover效果
+	 */
+	useEffect(() => {
+		if (rendererDataHook.isopenTreeViewer) {
+			if (rendererDataHook.hoveredTreeNodePath && rendererDataHook.hoveredTreeNodePath.join("") === pathArray.join("")) {
+				rendererDataHook.warpperDivChainRef.current = [];
+				// 触发Wrapper的hover效果
+				forChildSetHover(true);
+				setiscustomHover(true);
+			} else {
+				isCurrentHoverRef.current = false;
+				setiscustomHover(false);
+			}
+		} else {
+			rendererDataHook.warpperDivChainRef.current = [];
+			isCurrentHoverRef.current = false;
+			setiscustomHover(false);
+		}
+	}, [rendererDataHook.hoveredTreeNodePath, rendererDataHook.isopenTreeViewer, pathArray]);
 
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
@@ -1301,11 +1331,19 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 								onMouseEnter={function () {
 									if (!rendererDataHook.isOpenWarpperRightMenu) {
 										forChildSetHover(true, true);
+										// 触发TreeNodeItem的hover效果
+										if (rendererDataHook.isopenTreeViewer) {
+											rendererDataHook.handleTreeNodeHover(pathArray, true);
+										}
 									}
 								}}
 								onMouseLeave={function () {
 									if (!rendererDataHook.isOpenWarpperRightMenu) {
 										forChildSetHover(false, true);
+										// 取消TreeNodeItem的hover效果
+										if (rendererDataHook.isopenTreeViewer) {
+											rendererDataHook.handleTreeNodeHover(null, false);
+										}
 									}
 								}}
 							>

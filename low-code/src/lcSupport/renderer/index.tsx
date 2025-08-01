@@ -127,6 +127,12 @@ export const useRendererDataHook = function () {
 	 */
 	const [warpperhoverStateUpdateStamp, setwarpperhoverStateUpdateStamp] = useState<Number>(-1);
 
+	/**
+	 * 树节点hover状态管理
+	 * 用于TreeNodeItem和Wrapper之间的双向联动
+	 */
+	const [hoveredTreeNodePath, setHoveredTreeNodePath] = useState<number[] | null>(null);
+
 	/* 是否打开了组件篮子 */
 	const [isopenCollectedBucket, setisopenCollectedBucket] = useState<boolean>(false);
 	/* 是否打开了收藏的组件篮子 */
@@ -221,6 +227,19 @@ export const useRendererDataHook = function () {
 
 	/* 是否打开树列表（用于展示渲染树） */
 	const [isopenTreeViewer, setisopenTreeViewer] = useState<boolean>(false);
+
+	/**
+	 * 处理树节点hover事件
+	 * @param path 节点路径
+	 * @param isHovering 是否正在hover
+	 */
+	const handleTreeNodeHover = function (path: number[] | null, isHovering: boolean): void {
+		if (isHovering) {
+			setHoveredTreeNodePath(path);
+		} else {
+			setHoveredTreeNodePath(null);
+		}
+	};
 
 	//===============ref======================
 	//当鼠标放在warpper的事件div上时,或者右键选中该div时，或者抓起组件即将放下时，获得的节点路径链上的信息
@@ -1104,6 +1123,9 @@ export const useRendererDataHook = function () {
 		/* 是否打开树列表 */
 		isopenTreeViewer,
 		setisopenTreeViewer,
+		/* 树节点hover状态管理 */
+		hoveredTreeNodePath,
+		handleTreeNodeHover,
 	};
 };
 

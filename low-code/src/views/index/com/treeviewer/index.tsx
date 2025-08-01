@@ -121,7 +121,7 @@ const TreeViewer: FC<iprops> = ({}, _ref): ReactElement => {
 				background={false}
 				position={windowPosition}
 			>
-				{useMemo(makeTreeContent, [renderData.renderTreeObj.updaterenderTreeStamp])}
+				{useMemo(makeTreeContent, [renderData.renderTreeObj.updaterenderTreeStamp, renderData.warpperhoverStateUpdateStamp])}
 			</FreeWindow>
 		</>
 	);

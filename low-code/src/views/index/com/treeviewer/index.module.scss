@@ -140,6 +140,40 @@
 			}
 		}
 
+		/* 被外部hover时的样式（来自Wrapper的联动） */
+		&.treeNodeItemHovered {
+			background-color: #e3f2fd; // Lighter blue on hover
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Shadow effect
+			transform: translateY(-1px); // Slight lift
+			border-radius: 4px; // Rounded corners
+			margin: 1px 2px; // Adjust margin on hover
+
+			.treeNodeToggle {
+				.toggleIcon {
+					color: #1976d2; // Blue color
+					transform: scale(1.1); // Slight scale
+				}
+				.toggleIconExpanded {
+					color: #1976d2; // Blue color
+					transform: scale(1.1); // Slight scale
+				}
+				.toggleIconPlaceholder {
+					color: #999; // Placeholder color
+				}
+			}
+			.nodeMainInfo {
+				.nodeName {
+					color: #1976d2; // Blue color
+				}
+				.nodeLabel {
+					color: #1976d2; // Blue color
+				}
+				.nodeId {
+					color: #666; // Darker gray
+				}
+			}
+		}
+
 		/* 节点类型标识 */
 		.nodeTypeBadge {
 			padding: 1px 4px;
