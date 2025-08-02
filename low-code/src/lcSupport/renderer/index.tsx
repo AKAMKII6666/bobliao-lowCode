@@ -127,12 +127,6 @@ export const useRendererDataHook = function () {
 	 */
 	const [warpperhoverStateUpdateStamp, setwarpperhoverStateUpdateStamp] = useState<Number>(-1);
 
-	/**
-	 * 树节点hover状态管理
-	 * 用于TreeNodeItem和Wrapper之间的双向联动
-	 */
-	const [hoveredTreeNodePath, setHoveredTreeNodePath] = useState<number[] | null>(null);
-
 	/* 是否打开了组件篮子 */
 	const [isopenCollectedBucket, setisopenCollectedBucket] = useState<boolean>(false);
 	/* 是否打开了收藏的组件篮子 */
@@ -228,19 +222,6 @@ export const useRendererDataHook = function () {
 	/* 是否打开树列表（用于展示渲染树） */
 	const [isopenTreeViewer, setisopenTreeViewer] = useState<boolean>(false);
 
-	/**
-	 * 处理树节点hover事件
-	 * @param path 节点路径
-	 * @param isHovering 是否正在hover
-	 */
-	const handleTreeNodeHover = function (path: number[] | null, isHovering: boolean): void {
-		if (isHovering) {
-			setHoveredTreeNodePath(path);
-		} else {
-			setHoveredTreeNodePath(null);
-		}
-	};
-
 	//===============ref======================
 	//当鼠标放在warpper的事件div上时,或者右键选中该div时，或者抓起组件即将放下时，获得的节点路径链上的信息
 	const warpperDivChainRef = useRef<warpperDivObj[]>([]);
@@ -256,7 +237,65 @@ export const useRendererDataHook = function () {
 	/* 当前的生成布局的请求id */
 	const currentAIResponce = useRef<string>("");
 
+	/* warpper的实时map key为nodepath的string格式 */
+	const currentwarppersRef = useRef<{ [key: string]: warpperDivObj }>({});
+	/* 当前的warpper的hover链 */
+	const currentwarpperhoverChainRef = useRef<{ [key: string]: warpperDivObj }>({});
+
 	//===============function=================
+
+	/* 向渲染器注册warpper */
+	const registerWarpper = function (path: number[], warpper: warpperDivObj) {
+		currentwarppersRef.current[path.join("")] = warpper;
+	};
+
+	/* 向渲染器注销warpper */
+	const unregisterWarpper = function (path: number[]) {
+		delete currentwarppersRef.current[path.join("")];
+	};
+
+	/* 使用pathArray获取warpper */
+	const getWarpperByPath = function (path: number[]): warpperDivObj | null {
+		return currentwarppersRef.current[path.join("")];
+	};
+
+	/**传入一个pathArray，获取传入的pathArray的所有父节点 */
+	const getParentWarpperNodes = function (path: number[]): warpperDivObj[] {
+		let parentNodes: warpperDivObj[] = [];
+		for (let i = 0; i < path.length; i++) {
+			parentNodes.push(currentwarppersRef.current[path.slice(0, i).join("")]);
+		}
+		return parentNodes;
+	};
+
+	/**传入一个pathArray，获取传入的pathArray的所有父节点 */
+	const genWarpperHoverChain = function (path: number[], nocurrent: boolean = false) {
+		let warpperNodes: { [key: string]: warpperDivObj } = {};
+		for (let i = 0; i < path.length; i++) {
+			warpperNodes[path.slice(0, i).join("")] = currentwarppersRef.current[path.slice(0, i).join("")];
+			delete warpperNodes[path.slice(0, i).join("")].isCurrent;
+		}
+
+		warpperNodes[path.join("")] = currentwarppersRef.current[path.join("")];
+
+		/**
+		 * nocurrent 为true时，不设置当前节点为当前节点
+		 * 用于在鼠标进入节点时，不设置当前节点为当前节点
+		 */
+		if (!nocurrent) {
+			warpperNodes[path.join("")].isCurrent = true;
+		} else {
+			warpperNodes[path.join("")].isCurrent = false;
+		}
+		currentwarpperhoverChainRef.current = warpperNodes;
+		setwarpperhoverStateUpdateStamp(+new Date());
+	};
+
+	/**清除hover链 */
+	const clearWarpperHoverChain = function () {
+		currentwarpperhoverChainRef.current = {};
+		setwarpperhoverStateUpdateStamp(+new Date());
+	};
 
 	/* 生成布局 */
 	async function generateLayout(content: string, path: number[]) {
@@ -352,9 +391,10 @@ export const useRendererDataHook = function () {
 				setcurrentScssCode(await formatScssCode(currentScssCode + "  \n" + _tempTree.classes));
 			}
 			setisopenNoderenderertree(false);
-			toast.success("导入渲染树成功！");
+			toast.success("渲染树导入成功！");
+			genWarpperHoverChain(currentWarchingNodePath);
 		} catch (e) {
-			toast.error("导入渲染树失败，请检查渲染树文本是否正确！");
+			toast.error("渲染树导入失败，请检查输入的渲染树文本是否正确！");
 			toast.error(e.message);
 		}
 	};
@@ -1123,9 +1163,20 @@ export const useRendererDataHook = function () {
 		/* 是否打开树列表 */
 		isopenTreeViewer,
 		setisopenTreeViewer,
-		/* 树节点hover状态管理 */
-		hoveredTreeNodePath,
-		handleTreeNodeHover,
+		/* 注册warpper */
+		registerWarpper,
+		/* 注销warpper */
+		unregisterWarpper,
+		/* 获取warpper */
+		getWarpperByPath,
+		/* 生成warpper的hover链 */
+		genWarpperHoverChain,
+		/* 清除warpper的hover链 */
+		clearWarpperHoverChain,
+		/* 当前的warpper的hover链 */
+		currentwarpperhoverChainRef,
+		/* 获取warpper的父节点 */
+		getParentWarpperNodes,
 	};
 };
 

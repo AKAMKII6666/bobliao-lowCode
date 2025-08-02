@@ -31,13 +31,12 @@ import { SYS_APIMODE } from "renderer/config";
 export interface IWrapperProps {
 	node: ITreeNode;
 	pathArray: number[];
-	setHover?: (val: boolean) => void;
 }
 
 //往外面暴露统一名称的属性对象，用于生成低代码平台属性JSON schema
 export type Tinputprops = IWrapperProps;
 
-const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement => {
+const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 	//===============useHooks=================
 	const $ = useJquery();
 	/* window.$ = $; */
@@ -52,7 +51,12 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 	//当前组件的container节点
 	const [containerNode, setContainerNode] = useState<HTMLDivElement | null>(null);
 	const [resizeTstamp, setresizeTstamp] = useState<number>(-1);
+
+	/* 这个用于在一切特殊场景强行设置当前节点为第一位hover样式 */
 	const [iscustomHover, setiscustomHover] = useState<boolean>(false);
+
+	/* 当前warpper的title的left */
+	const [warpperTitleLeft, setwarpperTitleLeft] = useState<number>(0);
 
 	//当前warpper节点的位置和大小
 	const [wrapperRect, setWrapperRect] = useState({
@@ -80,6 +84,8 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 	//===============ref======================
 	const wrapperDivRef = useRef<HTMLDivElement>(null);
 	const resizeObserverRef = useRef<ResizeObserver | null>(null);
+	/* 当前节点是否是hover状态,这个状态用来标识当前节点的子节点是否被hover  */
+	/* 如果当前节点的子节点被hover ,isCurrentHoverRef 为true, 且iscustomHover必须为false */
 	const isCurrentHoverRef = useRef<boolean>(false);
 	const wrapperTitleRef = useRef<HTMLDivElement>(null);
 	const customHoverpath = useRef<number[]>([]);
@@ -107,8 +113,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 	const getWarpperDivTitleLeft = function () {
 		//累计left
 		let left = 0;
-		for (let i = 0; i < rendererDataHook.warpperDivChainRef.current.length; i++) {
-			let item = rendererDataHook.warpperDivChainRef.current[i];
+		let parentNodes = rendererDataHook.getParentWarpperNodes(pathArray);
+		for (let i = 0; i < parentNodes.length; i++) {
+			let item = parentNodes[i];
 
 			//如果是比自己层级大的自己就取消累计
 			if (item.currentNodePath.length > pathArray.length) {
@@ -160,48 +167,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		return {};
 	};
 
-	//接收子组件传来的hover状态，并向上传递
-	const forChildSetHover = function (value: boolean, isCurrent?: boolean | undefined) {
-		if (typeof setHover === "function") {
-			setHover(value);
-		}
-
-		if (typeof isCurrent === "undefined") {
-			isCurrentHoverRef.current = value;
-		}
-
-		if (value === true) {
-			let hasSame = false;
-			for (let i = 0; i < rendererDataHook.warpperDivChainRef.current.length; i++) {
-				let item = rendererDataHook.warpperDivChainRef.current[i];
-				if (item.currentNodePath.join("") === pathArray.join("")) {
-					hasSame = true;
-					break;
-				}
-			}
-			if (!hasSame) {
-				//填充路径链
-				rendererDataHook.warpperDivChainRef.current.push({
-					wrapperDivRef: wrapperDivRef.current,
-					wrapperTitleRef: wrapperTitleRef.current,
-					currentNodePath: pathArray,
-					levelIndex: pathArray.length,
-				});
-			}
-		}
-		if (value === false) {
-			rendererDataHook.warpperDivChainRef.current = rendererDataHook.warpperDivChainRef.current.reduce(function (acc, item) {
-				if (item.currentNodePath.join("") !== pathArray.join("")) {
-					acc.push(item);
-				}
-				return acc;
-			}, [] as warpperDivObj[]);
-		}
-		if (node.name === "PageRoot") {
-			rendererDataHook.setwarpperhoverStateUpdateStamp(+new Date());
-		}
-	};
-
 	/* 创建布局拖拽接收层 */
 	const createLayoutReviceLayter = function (_tempNodePath: number[]) {
 		if (node.nodetype === "layout") {
@@ -222,7 +187,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 					}
 					onMouseEnter={function () {
 						if (!rendererDataHook.isOpenWarpperRightMenu) {
-							forChildSetHover(true);
+							rendererDataHook.genWarpperHoverChain(pathArray);
 							setiscustomHover(true);
 							customHoverpath.current = _tempNodePath;
 							rendererDataHook.onDragEnter(_tempNodePath);
@@ -230,31 +195,31 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 					}}
 					onMouseLeave={function () {
 						if (!rendererDataHook.isOpenWarpperRightMenu) {
-							forChildSetHover(false);
+							rendererDataHook.clearWarpperHoverChain();
 							setiscustomHover(false);
-							customHoverpath.current = _tempNodePath;
+							customHoverpath.current = [];
 							rendererDataHook.onDragOut();
 						}
 					}}
 					onMouseUp={function (_e) {
-						forChildSetHover(false);
+						rendererDataHook.clearWarpperHoverChain();
 						setiscustomHover(false);
 						customHoverpath.current = [];
 						rendererDataHook.onDragEnd();
 					}}
 					style={{
 						opacity: (function () {
-							if (isCurrentHoverRef.current === true && iscustomHover === false) {
+							/* if (isCurrentHoverRef.current === true && iscustomHover === false) {
+								return 0.1;
+							} */
+
+							if (iscustomHover === false && customHoverpath.current.join("") !== _tempNodePath.join("")) {
 								return 0.1;
 							}
 
-							if (iscustomHover === true && customHoverpath.current.join("") !== _tempNodePath.join("")) {
+							/* if (rendererDataHook.isEnterWarpper === true && iscustomHover === false) {
 								return 0.1;
-							}
-
-							if (rendererDataHook.isEnterWarpper === true && iscustomHover === false) {
-								return 0.1;
-							}
+							} */
 							return "";
 						})(),
 					}}
@@ -283,7 +248,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 				newPathArray.push(index);
 				results.push(
 					<React.Fragment key={item.nodeid + "_" + index}>
-						<Wrapper node={item} pathArray={newPathArray} setHover={forChildSetHover} />
+						<Wrapper node={item} pathArray={newPathArray} />
 					</React.Fragment>
 				);
 
@@ -442,7 +407,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 						})()}
 						onMouseEnter={function () {
 							if (!rendererDataHook.isOpenWarpperRightMenu) {
-								forChildSetHover(true);
+								rendererDataHook.genWarpperHoverChain(pathArray);
 								setiscustomHover(true);
 								customHoverpath.current = currentChildPathArray;
 								rendererDataHook.onDragEnter(currentChildPathArray);
@@ -450,7 +415,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 						}}
 						onMouseLeave={function () {
 							if (!rendererDataHook.isOpenWarpperRightMenu) {
-								forChildSetHover(false);
+								rendererDataHook.clearWarpperHoverChain();
 								setiscustomHover(false);
 								customHoverpath.current = currentChildPathArray;
 								rendererDataHook.onDragOut();
@@ -465,13 +430,11 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 									x: rendererDataHook.currentMousePosition.x,
 									y: rendererDataHook.currentMousePosition.y,
 								});
-
-								forChildSetHover(false, true);
 							}
 						}}
 						onMouseUp={function (_e) {
 							if (_e.button === 0) {
-								forChildSetHover(false);
+								rendererDataHook.clearWarpperHoverChain();
 								setiscustomHover(false);
 								customHoverpath.current = [];
 								rendererDataHook.onDragEnd();
@@ -662,27 +625,19 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 
 	/* 选中上一个节点 */
 	const selectParent = function () {
-		let parent = null;
-		for (let i = 0; i < rendererDataHook.warpperDivChainRef.current.length; i++) {
-			let item = rendererDataHook.warpperDivChainRef.current[i];
-			if (item.currentNodePath.join("") === parentNodePath.join("")) {
-				parent = item;
-				break;
-			}
+		let parentNode = rendererDataHook.getWarpperByPath(parentNodePath);
+		if (parentNode?.levelIndex > 0) {
+			rendererDataHook.genWarpperHoverChain(parentNodePath);
+			rendererDataHook.setisOpenWarpperRightMenu(true);
+			rendererDataHook.setcurrentMenuNodeObj(parentNode);
 		}
-		rendererDataHook.setisOpenWarpperRightMenu(true);
-		rendererDataHook.setcurrentMenuNodeObj(parent);
-		if (rendererDataHook.isopenTreeViewer) {
-			rendererDataHook.handleTreeNodeHover(parentNodePath, true);
-		}
-		forChildSetHover(false, true);
 	};
 
 	/* 移动节点 */
 	const moveNode = function () {
+		rendererDataHook.clearWarpperHoverChain();
 		rendererDataHook.setisOpenWarpperRightMenu(false);
 		rendererDataHook.setcurrentMenuNodeObj(null);
-		forChildSetHover(false, true);
 		rendererDataHook.onDragStart(node, pathArray);
 		if (wrapperDivRef.current !== null) {
 			let position = $(wrapperDivRef.current).offset();
@@ -695,9 +650,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 
 	/* 拖放复制节点 */
 	const copyNode = function () {
+		rendererDataHook.clearWarpperHoverChain();
 		rendererDataHook.setisOpenWarpperRightMenu(false);
 		rendererDataHook.setcurrentMenuNodeObj(null);
-		forChildSetHover(false, true);
 		rendererDataHook.onDragStart(node, pathArray, "copy");
 		if (wrapperDivRef.current !== null) {
 			let position = $(wrapperDivRef.current).offset();
@@ -734,8 +689,8 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			okText: "确认",
 			cancelText: "取消",
 			onOk() {
-				forChildSetHover(false, true);
 				rendererDataHook.renderTreeObj.deleteNode(pathArray);
+				rendererDataHook.clearWarpperHoverChain();
 			},
 			onCancel() {},
 		});
@@ -757,7 +712,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			okText: "确认",
 			cancelText: "取消",
 			onOk() {
-				forChildSetHover(false, true);
 				autoFormRectsRef.current = autoFormRectsRef.current.reduce(function (acc, item, _index) {
 					if (_index !== index) {
 						acc.push(item);
@@ -800,6 +754,28 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 		}
 	};
 
+	/**当warpperhover或者被动hover */
+	const checkWarpperHoverOrPassiveHover = function () {
+		let warpperItem = rendererDataHook.currentwarpperhoverChainRef.current[pathArray.join("")];
+		if (typeof warpperItem !== "undefined") {
+			if (typeof warpperItem.isCurrent !== "undefined" && warpperItem.isCurrent) {
+			} else {
+				isCurrentHoverRef.current = true;
+			}
+
+			/* 这里要计算两次的原因 */
+			/**第一次计算先显示出来，位置可能不对 */
+			setwarpperTitleLeft(getWarpperDivTitleLeft());
+			/**第二次计算根据其它节点的正确的大小计算位置 */
+			setTimeout(() => {
+				setwarpperTitleLeft(getWarpperDivTitleLeft());
+			}, 1);
+		} else {
+			setiscustomHover(false);
+			isCurrentHoverRef.current = false;
+		}
+	};
+
 	//===============effects==================
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
@@ -809,32 +785,17 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 				initEventWrapper();
 				//创建resize
 				createResizeObserver();
+				//注册warpper
+				rendererDataHook.registerWarpper(pathArray, {
+					wrapperDivRef: wrapperDivRef.current!,
+					wrapperTitleRef: wrapperTitleRef.current!,
+					currentNodePath: pathArray,
+					levelIndex: pathArray.length,
+				});
 			}
 		},
 		[isMounted]
 	);
-
-	/**
-	 * 监听树节点hover状态变化
-	 * 当TreeNodeItem被hover时，触发Wrapper的hover效果
-	 */
-	useEffect(() => {
-		if (rendererDataHook.isopenTreeViewer) {
-			if (rendererDataHook.hoveredTreeNodePath && rendererDataHook.hoveredTreeNodePath.join("") === pathArray.join("")) {
-				rendererDataHook.warpperDivChainRef.current = [];
-				// 触发Wrapper的hover效果
-				forChildSetHover(true);
-				setiscustomHover(true);
-			} else {
-				isCurrentHoverRef.current = false;
-				setiscustomHover(false);
-			}
-		} else {
-			/* rendererDataHook.warpperDivChainRef.current = [];
-			isCurrentHoverRef.current = false;
-			setiscustomHover(false); */
-		}
-	}, [rendererDataHook.hoveredTreeNodePath, rendererDataHook.isopenTreeViewer, pathArray]);
 
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
@@ -855,41 +816,16 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			//清除resize
 			clearObserver();
 			setIsMounted(false);
+			//注销warpper
+			rendererDataHook.unregisterWarpper(pathArray);
 		};
 	}, []);
 
-	//取消右键菜单的情况下固定显示title的状态
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
-			if (
-				!rendererDataHook.isOpenWarpperRightMenu &&
-				rendererDataHook.currentMenuNodeObj !== null &&
-				rendererDataHook.currentMenuNodeObj.currentNodePath.join("") === pathArray.join("")
-			) {
-				forChildSetHover(false, true);
-			}
+			checkWarpperHoverOrPassiveHover();
 		},
-		[rendererDataHook.isOpenWarpperRightMenu, rendererDataHook.currentMenuNodeObj]
-	);
-
-	//自动激发右键菜单
-	useEffect(
-		function (): ReturnType<React.EffectCallback> {
-			if (
-				rendererDataHook.isOpenWarpperRightMenu &&
-				rendererDataHook.currentMenuNodeObj !== null &&
-				rendererDataHook.currentMenuNodeObj.currentNodePath.join("") === pathArray.join("")
-			) {
-				if (node.name === "PageRoot") {
-					rendererDataHook.setisOpenWarpperRightMenu(false);
-					rendererDataHook.setcurrentMenuNodeObj(null);
-					forChildSetHover(false, true);
-				} else {
-					forChildSetHover(true, true);
-				}
-			}
-		},
-		[rendererDataHook.isOpenWarpperRightMenu, rendererDataHook.currentMenuNodeObj]
+		[rendererDataHook.warpperhoverStateUpdateStamp]
 	);
 
 	return (
@@ -958,19 +894,16 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 									top: wrapperRect.top + "px",
 								}}
 								onMouseEnter={function () {
-									forChildSetHover(true);
 									setiscustomHover(true);
 									customHoverpath.current = _tempNodePath;
 									rendererDataHook.onDragEnter(_tempNodePath);
 								}}
 								onMouseLeave={function () {
-									forChildSetHover(false);
 									setiscustomHover(false);
 									customHoverpath.current = _tempNodePath;
 									rendererDataHook.onDragOut();
 								}}
 								onMouseUp={function (_e) {
-									forChildSetHover(false);
 									setiscustomHover(false);
 									customHoverpath.current = [];
 									rendererDataHook.onDragEnd();
@@ -1249,9 +1182,10 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 										}
 										//布局拖拽到接受层hover进去了的情况（layout）
 										if (
-											iscustomHover &&
-											rendererDataHook.currentDraggingNode &&
-											rendererDataHook.currentDraggingNode.nodetype === "layout"
+											iscustomHover ||
+											(iscustomHover &&
+												rendererDataHook.currentDraggingNode &&
+												rendererDataHook.currentDraggingNode.nodetype === "layout")
 										) {
 											return styles.dragHover;
 										}
@@ -1296,7 +1230,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 												y: position.top,
 											});
 										}
-										forChildSetHover(false, true);
 									}
 									/* } else {
 									} */
@@ -1326,20 +1259,12 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 								}}
 								onMouseEnter={function () {
 									if (!rendererDataHook.isOpenWarpperRightMenu) {
-										forChildSetHover(true, true);
-										// 触发TreeNodeItem的hover效果
-										if (rendererDataHook.isopenTreeViewer) {
-											rendererDataHook.handleTreeNodeHover(pathArray, true);
-										}
+										rendererDataHook.genWarpperHoverChain(pathArray);
 									}
 								}}
 								onMouseLeave={function () {
 									if (!rendererDataHook.isOpenWarpperRightMenu) {
-										forChildSetHover(false, true);
-										// 取消TreeNodeItem的hover效果
-										if (rendererDataHook.isopenTreeViewer) {
-											rendererDataHook.handleTreeNodeHover(null, false);
-										}
+										rendererDataHook.clearWarpperHoverChain();
 									}
 								}}
 							>
@@ -1350,7 +1275,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 									style={{
 										//
 										...getWarpperDivTitleTop(),
-										marginLeft: getWarpperDivTitleLeft() + "px",
+										marginLeft: warpperTitleLeft + "px",
 									}}
 								>
 									{(function () {
@@ -1374,7 +1299,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 					resizeTstamp,
 					rendererDataHook.renderTreeObj.updaterenderTreeStamp,
 					pathArray,
-					setHover,
+					warpperTitleLeft,
 				]
 			)}
 
@@ -1391,6 +1316,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 					rendererDataHook.renderTreeObj.updaterenderTreeStamp,
 					iscustomHover,
 					rendererDataHook.isEnterWarpper,
+					rendererDataHook.warpperhoverStateUpdateStamp,
 				]
 			)}
 			{/* 布局生成的聊天窗口 */}

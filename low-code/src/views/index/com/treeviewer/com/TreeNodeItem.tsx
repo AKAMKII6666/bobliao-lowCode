@@ -113,14 +113,15 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 	 * 处理鼠标进入事件
 	 */
 	const handleMouseEnter = () => {
-		renderData.handleTreeNodeHover(path, true);
+		console.log(path);
+		renderData.genWarpperHoverChain(path, true);
 	};
 
 	/**
 	 * 处理鼠标离开事件
 	 */
 	const handleMouseLeave = () => {
-		renderData.handleTreeNodeHover(null, false);
+		renderData.clearWarpperHoverChain();
 	};
 
 	/**
@@ -184,17 +185,16 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 		};
 	}, []);
 
-	/**
-	 * 监听renderer中的hover状态变化
-	 * 当Wrapper被hover时，TreeNodeItem也应该显示hover效果
-	 */
-	useEffect(() => {
-		if (renderData.hoveredTreeNodePath && renderData.hoveredTreeNodePath.join("") === path.join("")) {
-			setIsHovered(true);
-		} else if (renderData.hoveredTreeNodePath === null || renderData.hoveredTreeNodePath.join("") !== path.join("")) {
-			setIsHovered(false);
-		}
-	}, [renderData.hoveredTreeNodePath, path]);
+	useEffect(
+		function (): ReturnType<React.EffectCallback> {
+			if (renderData.currentwarpperhoverChainRef.current[path.join("")]) {
+				setIsHovered(true);
+			} else {
+				setIsHovered(false);
+			}
+		},
+		[renderData.currentwarpperhoverChainRef.current, renderData.warpperhoverStateUpdateStamp]
+	);
 
 	return (
 		<div

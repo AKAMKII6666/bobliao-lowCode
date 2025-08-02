@@ -22,6 +22,8 @@ export interface warpperDivObj {
 	currentNodePath: number[];
 	//当前节点的位置
 	levelIndex: number;
+	//是否为当前节点
+	isCurrent?: boolean;
 }
 
 //定义收藏结构体
