@@ -59,6 +59,8 @@
 		white-space: nowrap;
 		overflow: hidden;
 		position: relative;
+		line-height: auto;
+		line-height: normal;
 
 		&:hover {
 			background-color: #e3f2fd;
@@ -102,7 +104,7 @@
 			}
 
 			.toggleIconPlaceholder {
-				font-size: 12px;
+				font-size: 10px;
 				color: #ccc;
 			}
 		}

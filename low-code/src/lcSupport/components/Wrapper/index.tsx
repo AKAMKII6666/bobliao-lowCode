@@ -31,7 +31,7 @@ import { SYS_APIMODE } from "renderer/config";
 export interface IWrapperProps {
 	node: ITreeNode;
 	pathArray: number[];
-	setHover?: (val: boolean, a?: boolean, b?: boolean) => void;
+	setHover?: (val: boolean) => void;
 }
 
 //往外面暴露统一名称的属性对象，用于生成低代码平台属性JSON schema
@@ -161,9 +161,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 	};
 
 	//接收子组件传来的hover状态，并向上传递
-	const forChildSetHover = function (value: boolean, isCurrent?: boolean | undefined, forceUpdate?: boolean) {
+	const forChildSetHover = function (value: boolean, isCurrent?: boolean | undefined) {
 		if (typeof setHover === "function") {
-			setHover(value, undefined, forceUpdate);
+			setHover(value);
 		}
 
 		if (typeof isCurrent === "undefined") {
@@ -198,10 +198,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 			}, [] as warpperDivObj[]);
 		}
 		if (node.name === "PageRoot") {
-			rendererDataHook.setwarpperhoverStateUpdateStamp(+new Date());
-		}
-
-		if (forceUpdate) {
 			rendererDataHook.setwarpperhoverStateUpdateStamp(+new Date());
 		}
 	};
@@ -834,9 +830,9 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray, setHover }): ReactElement
 				setiscustomHover(false);
 			}
 		} else {
-			rendererDataHook.warpperDivChainRef.current = [];
+			/* rendererDataHook.warpperDivChainRef.current = [];
 			isCurrentHoverRef.current = false;
-			setiscustomHover(false);
+			setiscustomHover(false); */
 		}
 	}, [rendererDataHook.hoveredTreeNodePath, rendererDataHook.isopenTreeViewer, pathArray]);
 
