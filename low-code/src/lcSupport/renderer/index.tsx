@@ -269,7 +269,7 @@ export const useRendererDataHook = function () {
 	};
 
 	/**传入一个pathArray，获取传入的pathArray的所有父节点 */
-	const genWarpperHoverChain = function (path: number[], nocurrent: boolean = false) {
+	const genWarpperHoverChain = function (path: number[]) {
 		let warpperNodes: { [key: string]: warpperDivObj } = {};
 		for (let i = 0; i < path.length; i++) {
 			warpperNodes[path.slice(0, i).join("")] = currentwarppersRef.current[path.slice(0, i).join("")];
@@ -277,16 +277,7 @@ export const useRendererDataHook = function () {
 		}
 
 		warpperNodes[path.join("")] = currentwarppersRef.current[path.join("")];
-
-		/**
-		 * nocurrent 为true时，不设置当前节点为当前节点
-		 * 用于在鼠标进入节点时，不设置当前节点为当前节点
-		 */
-		if (!nocurrent) {
-			warpperNodes[path.join("")].isCurrent = true;
-		} else {
-			warpperNodes[path.join("")].isCurrent = false;
-		}
+		warpperNodes[path.join("")].isCurrent = true;
 		currentwarpperhoverChainRef.current = warpperNodes;
 		setwarpperhoverStateUpdateStamp(+new Date());
 	};

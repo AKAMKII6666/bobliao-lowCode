@@ -24,6 +24,7 @@ import ErrorBoundary from "../ErrorBoundary";
 import { newGuid } from "MithalCommonLibrary/utils/utils";
 import ChatWindow from "./com/ChatWindow";
 import { SYS_APIMODE } from "renderer/config";
+import PropChildWarpper from "./com/PropChildWarpper";
 
 /**
  * 传入参数
@@ -369,7 +370,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 	};
 
 	/* 创建autoForm/commoninquery子节点用的hover事件层 */
-	const makeAutoFormHoverPlaceHolder = function () {
+	const makePropChildWarpper = function () {
 		let results = [];
 		let index = 0;
 		for (let afitem of autoFormRectsRef.current) {
@@ -381,33 +382,15 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 				let currentChildPathArray = Array.from(pathArray);
 				currentChildPathArray.push(_index);
 				results.push(
-					<div
-						key={childItem.nodeid}
-						className={styles.autoformItemReciverLay}
-						style={(function () {
-							if (
-								rendererDataHook.mouseAction === "drag" &&
-								rendererDataHook.currentDraggingNode &&
-								rendererDataHook.currentDraggingNode.nodeid === ""
-							) {
-								return {
-									width: 0,
-									height: 0,
-									top: -100,
-									left: -100,
-									display: "none",
-								};
-							}
-							return {
-								width: afitem.width,
-								height: afitem.height,
-								top: afitem.top,
-								left: afitem.left,
-							};
-						})()}
+					<PropChildWarpper
+						rect={afitem}
+						childItem={childItem}
+						pathArray={currentChildPathArray}
+						onDelete={function () {
+							deleteAutoFormNode(_index);
+						}}
 						onMouseEnter={function () {
 							if (!rendererDataHook.isOpenWarpperRightMenu) {
-								rendererDataHook.genWarpperHoverChain(pathArray);
 								setiscustomHover(true);
 								customHoverpath.current = currentChildPathArray;
 								rendererDataHook.onDragEnter(currentChildPathArray);
@@ -415,7 +398,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 						}}
 						onMouseLeave={function () {
 							if (!rendererDataHook.isOpenWarpperRightMenu) {
-								rendererDataHook.clearWarpperHoverChain();
 								setiscustomHover(false);
 								customHoverpath.current = currentChildPathArray;
 								rendererDataHook.onDragOut();
@@ -434,7 +416,6 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 						}}
 						onMouseUp={function (_e) {
 							if (_e.button === 0) {
-								rendererDataHook.clearWarpperHoverChain();
 								setiscustomHover(false);
 								customHoverpath.current = [];
 								rendererDataHook.onDragEnd();
@@ -448,35 +429,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 							rendererDataHook.setisOpenWarpperRightMenu(false);
 							e.preventDefault(); // 阻止系统默认右键菜单
 						}}
-					>
-						<Tooltip
-							title={"删除" + node.name + "组件"}
-							placement="right"
-							classes={{
-								tooltip: styles.tipautofrom,
-							}}
-							followCursor={true}
-						>
-							<div
-								className={styles.delete}
-								onClick={function (_e) {
-									deleteAutoFormNode(_index);
-									_e.stopPropagation();
-								}}
-								onMouseDown={function (_e) {
-									_e.stopPropagation();
-								}}
-								onMouseUp={function (_e) {
-									_e.stopPropagation();
-								}}
-							>
-								{" "}
-								-{" "}
-							</div>
-						</Tooltip>
-						<label>{`${childItem.name} - ${childItem.label} - ${childItem.nodeid} `}</label>
-						<span>{`${childItem.name} `}</span>
-					</div>
+					/>
 				);
 			})(index);
 			index++;
@@ -840,7 +793,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 						) {
 							return null;
 						}
-						return makeAutoFormHoverPlaceHolder();
+						return makePropChildWarpper();
 					}
 					return null;
 				},

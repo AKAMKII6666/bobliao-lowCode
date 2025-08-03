@@ -270,7 +270,6 @@
 		padding: 3px 6px;
 		border-radius: 8px;
 		color: #fff;
-		transition: all 0.3s;
 		position: absolute;
 	}
 	label {
@@ -283,7 +282,8 @@
 		border: 0.5px solid #790a6efc;
 		transform: scale(1);
 	}
-	&:hover {
+	&:hover,
+	&.customHover {
 		border: 2px solid #790a6efc;
 		background-color: #d3b1cc5b;
 		label {

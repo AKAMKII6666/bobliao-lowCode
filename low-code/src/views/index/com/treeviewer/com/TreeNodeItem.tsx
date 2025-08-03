@@ -113,8 +113,7 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 	 * 处理鼠标进入事件
 	 */
 	const handleMouseEnter = () => {
-		console.log(path);
-		renderData.genWarpperHoverChain(path, true);
+		renderData.genWarpperHoverChain(path);
 	};
 
 	/**
