@@ -812,6 +812,10 @@ export const GPT_PROMPT_TEMPLATE = `你是一个专业的bobliao-lowCode低代�
 14. ✅ 如果用户需求中包含grid 组件，则需要将grid 的 props.container 设置为true  则该组件为gridContainer, 将grid 的 props.item 设置为true, 则该组件为gridItem
 15. ✅ SpecialEcharts 来自于echarts 的组件，请根据echarts 的文档，生成对应的props.echartProps
 16. ✅ SpecialEcharts props.containerProps的属性根据htmldiv的属性来进行配置
+17. ✅ 当组件类型为nodetype: "component"时，且父节点不为name:CommonInquert或AutoForm,这个组件不能和其它任何组件在同一个父节点下
+18. ✅ 当组件类型为nodetype: "component"时，且父节点不为name:CommonInquert或AutoForm,父节点有且只有此一个子节点
+19. ✅ 当组件类型为nodetype: "component"时，且父节点不为name:CommonInquert或AutoForm,父节点只能是nodetype:"layout"节点
+20. ✅ 当组件类型为nodetype: "component"时，建议使用div作为父节点
 
 ## 用户需求
 ---[在这里输入用户的具体需求]---

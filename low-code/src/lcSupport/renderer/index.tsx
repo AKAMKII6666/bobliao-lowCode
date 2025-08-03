@@ -270,9 +270,11 @@ export const useRendererDataHook = function () {
 
 	/**传入一个pathArray，获取传入的pathArray的所有父节点 */
 	const genWarpperHoverChain = function (path: number[]) {
+		currentwarpperhoverChainRef.current = {};
 		let warpperNodes: { [key: string]: warpperDivObj } = {};
 		for (let i = 0; i < path.length; i++) {
 			warpperNodes[path.slice(0, i).join("")] = currentwarppersRef.current[path.slice(0, i).join("")];
+			warpperNodes[path.slice(0, i).join("")].isCurrent = false;
 			delete warpperNodes[path.slice(0, i).join("")].isCurrent;
 		}
 
@@ -686,8 +688,10 @@ export const useRendererDataHook = function () {
 
 		if (node.nodetype === "component" && node.name === "MithrilAntdTable") {
 			let cProps: MithrilAntdTableComponentProps = structuredClone(node.props) as MithrilAntdTableComponentProps;
-			cProps.dataSource = listFakeData;
-			cProps.rowKey = (record: any) => record.code;
+			if (typeof cProps.dataSource === "undefined" || cProps.dataSource.length === 0) {
+				cProps.dataSource = listFakeData;
+				cProps.rowKey = (record: any) => record.code;
+			}
 			newProps = cProps;
 		}
 

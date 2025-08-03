@@ -712,6 +712,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 		let warpperItem = rendererDataHook.currentwarpperhoverChainRef.current[pathArray.join("")];
 		if (typeof warpperItem !== "undefined") {
 			if (typeof warpperItem.isCurrent !== "undefined" && warpperItem.isCurrent) {
+				setiscustomHover(true);
 			} else {
 				isCurrentHoverRef.current = true;
 			}

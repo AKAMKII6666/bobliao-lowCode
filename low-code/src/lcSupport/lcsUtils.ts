@@ -572,9 +572,9 @@ export const components: ITreeNode[] = [
 		label: "数据表格",
 		props: {
 			dataSource: [],
-			current: "0",
-			pageSize: "0",
-			total: "4",
+			current: "1",
+			pageSize: "10",
+			total: "1",
 			sticky: {
 				offsetHeader: 0,
 			},
