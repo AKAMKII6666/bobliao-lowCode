@@ -8,6 +8,11 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, FC
 import { ITreeNode } from "../../../../../lcSupport/interface/ItreeNode";
 import styles from "../index.module.scss";
 import { useRendererDataContext } from "../../../../../lcSupport/renderer";
+import { Modal } from "antd";
+import toast from "react-hot-toast";
+import { Tooltip } from "@mui/material";
+import { newGuid } from "MithalCommonLibrary/utils/utils";
+
 /**
  * 传入参数
  */
@@ -124,6 +129,83 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 	};
 
 	/**
+	 * 处理删除按钮点击事件
+	 */
+	const handleDeleteClick = (e: React.MouseEvent) => {
+		e.stopPropagation(); // 阻止事件冒泡，避免触发展开/收起
+
+		// 检查是否为根节点
+		if (node.name === "PageRoot") {
+			toast.error("页面根节点无法删除!");
+			return;
+		}
+
+		Modal.confirm({
+			title: "删除节点",
+			width: "600px",
+			content: (
+				<>
+					<p>确认删除以下节点吗？</p>
+					<p>{`${node.name} - ${node.label} - ${node.nodeid}`}</p>
+					<p>此节点以及其以下所有子节点都将被删除！</p>
+				</>
+			),
+			okText: "确认删除",
+			cancelText: "取消",
+			onOk() {
+				renderData.renderTreeObj.deleteNode(path);
+				renderData.renderTreeObj.emitAndSaveTree();
+				toast.success("节点删除成功！");
+			},
+			onCancel() {},
+		});
+	};
+
+	/**
+	 * 处理属性编辑按钮点击事件
+	 */
+	const handleEditClick = (e: React.MouseEvent) => {
+		e.stopPropagation(); // 阻止事件冒泡，避免触发展开/收起
+
+		// 检查是否为根节点
+		if (node.name === "PageRoot") {
+			toast.error("页面根节点无法编辑!");
+			return;
+		}
+
+		// 打开属性编辑面板
+		renderData.editNodeProps(node, path);
+	};
+
+	/**
+	 * 处理复制按钮点击事件
+	 */
+	const handleCopyClick = (e: React.MouseEvent) => {
+		e.stopPropagation(); // 阻止事件冒泡，避免触发展开/收起
+
+		// 检查是否为根节点
+		if (node.name === "PageRoot") {
+			toast.error("页面根节点无法复制!");
+			return;
+		}
+
+		// 创建新节点（深拷贝）
+		const newNode = structuredClone(node);
+		newNode.nodeid = newGuid();
+		newNode.isTached = true;
+
+		// 获取父节点路径
+		const parentPath = [...path];
+		parentPath.pop();
+
+		// 在父节点下添加新节点
+		renderData.renderTreeObj.addNode(parentPath, newNode);
+		renderData.renderTreeObj.emitAndSaveTree();
+
+		toast.success("节点复制成功！");
+	};
+
+	/**
 	 * 渲染展开/收起图标
 	 */
 	const renderToggleIcon = () => {
@@ -136,6 +218,57 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 		} else {
 			return <span className={styles.toggleIconPlaceholder}>•</span>;
 		}
+	};
+
+	/**
+	 * 渲染复制按钮
+	 */
+	const renderCopyButton = () => {
+		if (node.name === "PageRoot") {
+			return null; // 根节点不显示复制按钮
+		}
+
+		return (
+			<Tooltip title="复制一个" placement="top">
+				<div className={styles.copyButton} onClick={handleCopyClick}>
+					<span className={styles.copyIcon}>+1</span>
+				</div>
+			</Tooltip>
+		);
+	};
+
+	/**
+	 * 渲染属性编辑按钮
+	 */
+	const renderEditButton = () => {
+		if (node.name === "PageRoot") {
+			return null; // 根节点不显示编辑按钮
+		}
+
+		return (
+			<Tooltip title="编辑属性" placement="top">
+				<div className={styles.editButton} onClick={handleEditClick}>
+					<span className={styles.editIcon}>⚙</span>
+				</div>
+			</Tooltip>
+		);
+	};
+
+	/**
+	 * 渲染删除按钮
+	 */
+	const renderDeleteButton = () => {
+		if (node.name === "PageRoot") {
+			return null; // 根节点不显示删除按钮
+		}
+
+		return (
+			<Tooltip title="删除节点" placement="top">
+				<div className={styles.deleteButton} onClick={handleDeleteClick}>
+					<span className={styles.deleteIcon}>×</span>
+				</div>
+			</Tooltip>
+		);
 	};
 
 	/**
@@ -223,6 +356,13 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 				{/* 子节点数量 - 移到同一行 */}
 				{renderChildrenCount()}
 			</div>
+
+			{/* 属性编辑按钮 */}
+			{renderEditButton()}
+			{/* 复制按钮 */}
+			{renderCopyButton()}
+			{/* 删除按钮 */}
+			{renderDeleteButton()}
 		</div>
 	);
 };

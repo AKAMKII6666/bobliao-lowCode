@@ -120,6 +120,9 @@ const TreeViewer: FC<iprops> = ({}, _ref): ReactElement => {
 				}}
 				background={false}
 				position={windowPosition}
+				style={{
+					zIndex: 201,
+				}}
 			>
 				{useMemo(makeTreeContent, [renderData.renderTreeObj.updaterenderTreeStamp, renderData.warpperhoverStateUpdateStamp])}
 			</FreeWindow>

@@ -245,6 +245,117 @@
 				flex-shrink: 0;
 			}
 		}
+
+		/* 删除按钮 */
+		.deleteButton {
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #90caf9;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			opacity: 1;
+			visibility: visible;
+			z-index: 10;
+
+			&:hover {
+				background-color: #42a5f5;
+				transform: translateY(-50%) scale(1.1);
+				box-shadow: 0 2px 8px rgba(144, 202, 249, 0.3);
+			}
+
+			&:active {
+				transform: translateY(-50%) scale(0.95);
+			}
+
+			.deleteIcon {
+				font-size: 14px;
+				font-weight: bold;
+				line-height: 1;
+			}
+		}
+
+		/* 编辑按钮 */
+		.editButton {
+			position: absolute;
+			right: 36px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #a5d6a7;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			opacity: 1;
+			visibility: visible;
+			z-index: 10;
+
+			&:hover {
+				background-color: #66bb6a;
+				transform: translateY(-50%) scale(1.1);
+				box-shadow: 0 2px 8px rgba(165, 214, 167, 0.3);
+			}
+
+			&:active {
+				transform: translateY(-50%) scale(0.95);
+			}
+
+			.editIcon {
+				font-size: 12px;
+				font-weight: bold;
+				line-height: 1;
+			}
+		}
+
+		/* 复制按钮 */
+		.copyButton {
+			position: absolute;
+			right: 64px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #ffb74d;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			opacity: 1;
+			visibility: visible;
+			z-index: 10;
+
+			&:hover {
+				background-color: #ff9800;
+				transform: translateY(-50%) scale(1.1);
+				box-shadow: 0 2px 8px rgba(255, 183, 77, 0.3);
+			}
+
+			&:active {
+				transform: translateY(-50%) scale(0.95);
+			}
+
+			.copyIcon {
+				font-size: 10px;
+				font-weight: bold;
+				line-height: 1;
+			}
+		}
 	}
 
 	/* 子节点容器 */
