@@ -356,6 +356,58 @@
 				line-height: 1;
 			}
 		}
+
+		/* 拖拽事件接受层 */
+		.dropZone {
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: 20px;
+			background: rgba(25, 118, 210, 0.1);
+			border: 2px dashed #1976d2;
+			border-radius: 4px;
+			z-index: 1002; /* 提高到overlayElement之上 */
+			cursor: pointer;
+			transition: all 0.2s ease;
+			opacity: 0; /* 默认全透明 */
+
+			&:hover {
+				background: rgba(25, 118, 210, 0.2);
+				border-color: #1565c0;
+				opacity: 0.5; /* hover时半透明 */
+			}
+
+			/* 插入到节点前的接受层 */
+			&[data-position="before"] {
+				top: -10px;
+			}
+
+			/* 插入到节点内的接受层 */
+			&[data-position="inside"] {
+				top: 50%;
+				transform: translateY(-50%);
+				height: 30px;
+				background: rgba(76, 175, 80, 0.1);
+				border-color: #4caf50;
+
+				&:hover {
+					background: rgba(76, 175, 80, 0.2);
+					border-color: #388e3c;
+				}
+			}
+
+			/* 插入到节点后的接受层 */
+			&[data-position="after"] {
+				bottom: -10px;
+			}
+		}
+
+		/* 拖拽状态下的节点样式 */
+		&.treeNodeItemDragging {
+			opacity: 0.6;
+			transform: scale(0.98);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		}
 	}
 
 	/* 子节点容器 */

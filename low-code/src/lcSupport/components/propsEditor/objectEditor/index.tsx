@@ -171,7 +171,6 @@ const ObjectEditor: FC<iprops> = ({ nodeDefine = {}, mainPropName, nodeProps, pa
 	 *删除key
 	 */
 	const deleteKey = function (key: string | number) {
-		debugger;
 		if (key.toString().trim() === "") return;
 
 		let node = renderData.renderTreeObj.findNodeByPath(renderData.renderTreeObj.renderTree, renderData.settingPropsNodePath);

@@ -222,6 +222,14 @@ export const useRendererDataHook = function () {
 	/* 是否打开树列表（用于展示渲染树） */
 	const [isopenTreeViewer, setisopenTreeViewer] = useState<boolean>(false);
 
+	/* 树形列表拖拽相关状态 */
+	const [isTreeDragging, setIsTreeDragging] = useState<boolean>(false);
+	const [draggingNodeData, setDraggingNodeData] = useState<ITreeNode | null>(null);
+	const [draggingNodePath, setDraggingNodePath] = useState<number[] | null>(null);
+	const [dragPreviewElement, setDragPreviewElement] = useState<HTMLElement | null>(null);
+	const dragPreviewCleanupRef = useRef<(() => void) | null>(null);
+	const dropZonesRef = useRef<HTMLElement[]>([]);
+
 	//===============ref======================
 	//当鼠标放在warpper的事件div上时,或者右键选中该div时，或者抓起组件即将放下时，获得的节点路径链上的信息
 	const warpperDivChainRef = useRef<warpperDivObj[]>([]);
@@ -1158,6 +1166,17 @@ export const useRendererDataHook = function () {
 		/* 是否打开树列表 */
 		isopenTreeViewer,
 		setisopenTreeViewer,
+		/* 树形列表拖拽相关状态 */
+		isTreeDragging,
+		setIsTreeDragging,
+		draggingNodeData,
+		setDraggingNodeData,
+		draggingNodePath,
+		setDraggingNodePath,
+		dragPreviewElement,
+		setDragPreviewElement,
+		dragPreviewCleanupRef,
+		dropZonesRef,
 		/* 注册warpper */
 		registerWarpper,
 		/* 注销warpper */

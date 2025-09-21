@@ -91,7 +91,6 @@ const TipTapRichTextEditor: FC<iprops> = ({ value, onChange, onBlur, onImageUplo
 
 	//插入图片上传中的占位符
 	const insertPlaceholderImage = (editor: Editor, id: string) => {
-		debugger;
 		editor
 			.chain()
 			.focus()

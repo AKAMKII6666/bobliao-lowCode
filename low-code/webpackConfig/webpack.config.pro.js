@@ -9,7 +9,6 @@ const fs = require("fs");
 const { ESBuildMinifyPlugin } = require("esbuild-loader");
 const { ModuleFederationPlugin } = require("@module-federation/enhanced/webpack");
 const sharedConfig = require("./ModuleFederationPlugin.config.js");
-debugger;
 
 //给web发布版做版本号
 //读写../public/version.json这个文件的目的是，

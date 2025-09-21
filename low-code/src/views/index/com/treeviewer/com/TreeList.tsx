@@ -1,13 +1,14 @@
 /**
  * 廖力编写
  * 模块名称：树形列表组件
- * 模块说明：递归渲染树形结构，展示渲染树的层级关系
+ * 模块说明：递归渲染树形结构，展示渲染树的层级关系，支持拖拽功能
  * 编写时间：2025年1月
  */
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, FC, ReactElement } from "react";
 import { ITreeNode } from "../../../../../lcSupport/interface/ItreeNode";
 import TreeNodeItem from "./TreeNodeItem";
 import styles from "../index.module.scss";
+import { useRendererDataContext } from "../../../../../lcSupport/renderer";
 
 /**
  * 传入参数
@@ -25,6 +26,10 @@ export interface ITreeListProps {
 
 const TreeList: FC<ITreeListProps> = ({ treeData, updateStamp }): ReactElement => {
 	//===============useHooks=================
+	/**
+	 * 获取渲染器数据上下文
+	 */
+	const renderData = useRendererDataContext();
 
 	//===============state====================
 	/**
@@ -90,6 +95,29 @@ const TreeList: FC<ITreeListProps> = ({ treeData, updateStamp }): ReactElement =
 	const isNodeExpanded = (path: number[]): boolean => {
 		const pathKey = path.join("-");
 		return expandedNodes.has(pathKey);
+	};
+
+	/**
+	 * 处理全局鼠标抬起事件，用于结束拖拽
+	 */
+	const handleGlobalMouseUp = () => {
+		// 检查是否正在拖拽
+		if (renderData.isTreeDragging === true) {
+			// 延迟清理，避免与拖拽预览的mouseup冲突
+			setTimeout(() => {
+				// 清理拖拽预览
+				if (renderData.dragPreviewCleanupRef.current) {
+					renderData.dragPreviewCleanupRef.current();
+					renderData.dragPreviewCleanupRef.current = null;
+					renderData.setDragPreviewElement(null);
+				}
+
+				// 清理拖拽状态
+				renderData.setIsTreeDragging(false);
+				renderData.setDraggingNodeData(null);
+				renderData.setDraggingNodePath(null);
+			}, 100);
+		}
 	};
 
 	/**

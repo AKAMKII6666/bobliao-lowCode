@@ -389,7 +389,6 @@ const EditorItem: FC<IEditorItemProps> = (
 
 	useEffect(
 		function (): ReturnType<React.EffectCallback> {
-			debugger;
 			let node = renderData.renderTreeObj.findNodeByPath(renderData.renderTreeObj.renderTree, renderData.settingPropsNodePath);
 			if (!node) return;
 			// 克隆 props 并处理深层结构（避免结构共享）

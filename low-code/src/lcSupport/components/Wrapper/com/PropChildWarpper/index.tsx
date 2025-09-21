@@ -124,7 +124,6 @@ const PropChildWarpper: FC<IPropChildWarpperProps> = (
 	const checkWarpperHoverOrPassiveHover = function () {
 		let warpperItem = rendererDataHook.currentwarpperhoverChainRef.current[pathArray.join("")];
 		if (typeof warpperItem !== "undefined") {
-			debugger;
 			if (typeof warpperItem.isCurrent !== "undefined" && warpperItem.isCurrent) {
 				setIsCurrentHover(true);
 			} else {
