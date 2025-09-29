@@ -35,6 +35,7 @@
 		"./SpecialEcharts": "./src/publicComponents/SpecialEcharts/index",
 		"./Icon": "./src/publicComponents/Icon/index",
 		"./IconButton": "./src/publicComponents/IconButton/index",
+		"./PermissionBlocker": "./src/publicComponents/permissionBlocker/index",
 		"./utils/inqueryState": "./src/utils/inqueryState",
 		"./utils/customParamsSerializer": "./src/utils/customParamsSerializer",
 		"./utils/dynamicSelectionsParamsHook": "./src/utils/dynamicSelectionsParamsHook",
@@ -47,6 +48,7 @@
 		"./utils/socket": "./src/utils/socket",
 		"./utils/utils": "./src/utils/utils",
 		"./utils/globalMenuHook": "./src/utils/globalMenuHook",
-		"./publicThemeSystem": "./src/publicThemeSystem/index"
+		"./publicThemeSystem": "./src/publicThemeSystem/index",
+		"./useConfig": "./src/publicThemeSystem/useConfig.ts"
 	}
 }

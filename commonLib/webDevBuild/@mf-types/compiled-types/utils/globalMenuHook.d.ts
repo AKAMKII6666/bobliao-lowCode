@@ -70,6 +70,9 @@ export declare const useGlobalMenuDataHook: ({ menuLocalStorageName, loadMenuDat
     chooseTopMenu: (id: any) => void;
     menuChangestamp: number;
     navPathArr: IpathItem[];
+    menuHashTable: {
+        [key: string]: IMenuDataItem;
+    };
 };
 /**
  * 创建一个需要全局使用的context
@@ -84,6 +87,9 @@ export declare const GlobalMenuDataContext: React.Context<{
     chooseTopMenu: (id: any) => void;
     menuChangestamp: number;
     navPathArr: IpathItem[];
+    menuHashTable: {
+        [key: string]: IMenuDataItem;
+    };
 }>;
 /**
  * 给子节点使用的context

@@ -118,8 +118,33 @@ export const useGlobalMenuDataHook = function ({
 	//===============static===================
 
 	//===============ref======================
+	/* 菜单哈希表，用于快速检索菜单是否存在 */
+	const menuHashTable = useRef<{ [key: string]: IMenuDataItem }>({});
 
 	//===============function=================
+	/**
+	 *
+	 * @param menuData 菜单数据
+	 * @description 生成菜单哈希表
+	 */
+	const genMenuHashTable = function (menuData: IMenuDataItem[]) {
+		let table: { [key: string]: IMenuDataItem } = {};
+		let gen = function (nodes: IMenuDataItem[]) {
+			for (let node of nodes) {
+				if (node.type === "C") {
+					table[node.frontPath] = node;
+				}
+				if (node.type === "F") {
+					table[node.backPath] = node;
+				}
+				if (node.menuChildren && node.menuChildren.length > 0) {
+					gen(node.menuChildren);
+				}
+			}
+		};
+		gen(menuData);
+		menuHashTable.current = table;
+	};
 	//获取当前用户菜单树数据
 	const getMenuData = async function () {
 		if (menuData === null) {
@@ -145,7 +170,7 @@ export const useGlobalMenuDataHook = function ({
 						//那就是没有权限
 						toast.error("没有访问权限或当前页面不存在!");
 					}
-					message.error(_e.msg);
+					message.error(_e.msg || _e.message || "获取菜单数据失败");
 					return null;
 				}
 			}
@@ -226,6 +251,7 @@ export const useGlobalMenuDataHook = function ({
 
 	/* 路由改动时自动查找到当前页面 */
 	const routerChange = function () {
+		debugger;
 		if (location.pathname === "/building") {
 			return;
 		}
@@ -244,7 +270,7 @@ export const useGlobalMenuDataHook = function ({
 			function (node, isFind) {
 				if (node.type === "C" || node.type === "F") {
 					if (location.pathname !== "" && location.pathname !== "/") {
-						if (location.pathname.indexOf(node.frontPath) === 0 && node.visible) {
+						if (location.pathname.indexOf(node.frontPath) === 0 /*  && node.visible */) {
 							let strLength = location.pathname.replace(node.frontPath, "").length;
 							if (strLength < current.lastCount) {
 								current = {
@@ -648,6 +674,9 @@ export const useGlobalMenuDataHook = function ({
 			//如果有菜单数据，就生成菜单树
 			if (menuData !== null && hasGenMenu === false) {
 				(async function () {
+					genMenuHashTable(menuData.data);
+					console.log(menuHashTable.current);
+
 					await genMenuTree();
 					sethasGenMenu(true);
 
@@ -688,8 +717,12 @@ export const useGlobalMenuDataHook = function ({
 		menuData,
 		//选择顶部菜单中的第一个可点击的子菜单
 		chooseTopMenu,
+		//菜单是否已经生成
 		menuChangestamp,
+		//当前站点地图路径
 		navPathArr,
+		//菜单哈希表
+		menuHashTable: menuHashTable.current,
 	};
 };
 
