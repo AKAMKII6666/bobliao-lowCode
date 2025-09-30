@@ -1,0 +1,151 @@
+html,
+body,
+#root {
+	height: 100%;
+}
+
+/* 使用字体 */
+@font-face {
+	font-family: "pangmenzhengdaoregular";
+	src: url("../assets/fonts/pangmenzhengdaobiaotiti-1-webfont.woff2") format("woff2"),
+		url("../assets/fonts/pangmenzhengdaobiaotiti-1-webfont.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "pangmenzhengdao2";
+	src: url("../assets/fonts/pmzdbtt.woff2") format("woff2"), url("../assets/fonts/pmzdbtt.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "YouSheBiaoTiHei";
+	src: url("../assets/fonts/YouSheBiaoTiHei.eot");
+	src: url("../assets/fonts/YouSheBiaoTiHei.eot?#iefix") format("embedded-opentype"), url("../assets/fonts/YouSheBiaoTiHei.woff2") format("woff2"),
+		url("../assets/fonts/YouSheBiaoTiHei.woff") format("woff"), url("../assets/fonts/YouSheBiaoTiHei.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+div,
+span,
+label,
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+tr,
+td,
+th {
+	caret-color: transparent !important; /* 去掉文本光标 */
+}
+
+input,
+textarea {
+	caret-color: #000 !important; /* 去掉文本光标 */
+	caret-shape: block;
+}
+
+/* antd样式复写 */
+.ant-checkbox {
+	width: 14px;
+	height: 14px;
+	overflow: hidden;
+	.ant-checkbox-inner {
+		width: 14px;
+		height: 14px;
+		box-sizing: border-box;
+		/* border: 1px solid #019376; */
+	}
+
+	&.ant-checkbox-checked {
+		.ant-checkbox-inner {
+			&:after {
+				top: 5.5px;
+				left: 3px;
+				scale: 0.8;
+			}
+		}
+	}
+}
+.ant-tree {
+	.ant-tree-checkbox {
+		width: 14px;
+		height: 14px;
+		overflow: hidden;
+		.ant-tree-checkbox-inner {
+			width: 14px;
+			height: 14px;
+			box-sizing: border-box; /* 
+			border: 1px solid #019376; */
+		}
+		&.ant-tree-checkbox-checked {
+			.ant-tree-checkbox-inner {
+				&:after {
+					top: 5.5px;
+					left: 3px;
+					scale: 0.8;
+				}
+			}
+		}
+
+		&.ant-tree-checkbox-indeterminate {
+			.ant-tree-checkbox-inner {
+				&:after {
+					border-radius: 2px;
+				}
+			}
+		}
+	}
+}
+
+.ant-picker {
+	margin-left: 16px;
+	height: 40.13px;
+}
+
+/* 避免autoFill自动给更改过value的input加上背景颜色 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0px 1000px white inset !important;
+	box-shadow: 0 0 0px 1000px white inset !important;
+	-webkit-text-fill-color: inherit !important;
+	transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Chrome 92+ 内部新伪类 */
+input:-internal-autofill-selected {
+	background-color: transparent !important;
+	background-image: none !important;
+	color: inherit !important;
+}
+
+/* 离线提示 */
+.sys_offline_bottom {
+	height: 20px;
+	line-height: 20px;
+	background-color: #a76003;
+	color: #fff;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	z-index: 9999;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	opacity: 0.3;
+	transition: all 0.3s;
+	cursor: default;
+	&:hover {
+		opacity: 1;
+	}
+}

@@ -49,6 +49,7 @@
 		"./utils/utils": "./src/utils/utils",
 		"./utils/globalMenuHook": "./src/utils/globalMenuHook",
 		"./publicThemeSystem": "./src/publicThemeSystem/index",
+		"./publicThemeSystem_default": "./src/publicThemeSystem_default/index",
 		"./useConfig": "./src/publicThemeSystem/useConfig.ts"
 	}
 }

@@ -1,0 +1,16 @@
+import { Theme } from '@mui/material/styles';
+export default function customShadows(navType: string, theme: Theme): {
+    z1: string;
+    z8: string;
+    z12: string;
+    z16: string;
+    z20: string;
+    z24: string;
+    primary: string;
+    secondary: string;
+    orange: string;
+    success: string;
+    warning: string;
+    error: string;
+};
+//# sourceMappingURL=shadows.d.ts.map
