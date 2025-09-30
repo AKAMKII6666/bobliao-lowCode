@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material/styles';
+import { Theme } from "@mui/material/styles";
 export default function componentStyleOverrides(theme: Theme, borderRadius: number, outlinedFilled: boolean): {
     MuiButton: {
         styleOverrides: {
@@ -62,20 +62,20 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
                 color: string;
                 paddingTop: string;
                 paddingBottom: string;
-                '&.Mui-selected': {
+                "&.Mui-selected": {
                     color: string;
                     backgroundColor: string;
-                    '&:hover': {
+                    "&:hover": {
                         backgroundColor: string;
                     };
-                    '& .MuiListItemIcon-root': {
+                    "& .MuiListItemIcon-root": {
                         color: string;
                     };
                 };
-                '&:hover': {
+                "&:hover": {
                     backgroundColor: string;
                     color: string;
-                    '& .MuiListItemIcon-root': {
+                    "& .MuiListItemIcon-root": {
                         color: string;
                     };
                 };
@@ -101,7 +101,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
         styleOverrides: {
             input: {
                 color: any;
-                '&::placeholder': {
+                "&::placeholder": {
                     color: string;
                     fontSize: string;
                 };
@@ -113,13 +113,13 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
             root: {
                 background: any;
                 borderRadius: string;
-                '& .MuiOutlinedInput-notchedOutline': {
+                "& .MuiOutlinedInput-notchedOutline": {
                     borderColor: string;
                 };
-                '&:hover $notchedOutline': {
+                "&:hover $notchedOutline": {
                     borderColor: string;
                 };
-                '&.MuiInputBase-multiline': {
+                "&.MuiInputBase-multiline": {
                     padding: number;
                 };
             };
@@ -128,9 +128,9 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
                 background: any;
                 padding: string;
                 borderRadius: string;
-                '&.MuiInputBase-inputSizeSmall': {
+                "&.MuiInputBase-inputSizeSmall": {
                     padding: string;
-                    '&.MuiInputBase-inputAdornedStart': {
+                    "&.MuiInputBase-inputAdornedStart": {
                         paddingLeft: number;
                     };
                 };
@@ -146,7 +146,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
     MuiSlider: {
         styleOverrides: {
             root: {
-                '&.Mui-disabled': {
+                "&.Mui-disabled": {
                     color: string;
                 };
             };
@@ -162,11 +162,11 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
     MuiAutocomplete: {
         styleOverrides: {
             root: {
-                '& .MuiAutocomplete-tag': {
+                "& .MuiAutocomplete-tag": {
                     background: string;
                     borderRadius: number;
                     color: any;
-                    '.MuiChip-deleteIcon': {
+                    ".MuiChip-deleteIcon": {
                         color: any;
                     };
                 };
@@ -188,7 +188,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
     MuiSelect: {
         styleOverrides: {
             select: {
-                '&:focus': {
+                "&:focus": {
                     backgroundColor: string;
                 };
             };
@@ -205,7 +205,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
     MuiChip: {
         styleOverrides: {
             root: {
-                '&.MuiChip-deletable .MuiChip-deleteIcon': {
+                "&.MuiChip-deletable .MuiChip-deleteIcon": {
                     color: string;
                 };
             };
@@ -238,16 +238,16 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
         styleOverrides: {
             tabs: {
                 backgroundColor: any;
-                '& .MuiTabs-flexContainer': {
+                "& .MuiTabs-flexContainer": {
                     borderColor: any;
                 };
-                '& .MuiTab-root': {
+                "& .MuiTab-root": {
                     color: string;
                 };
-                '& .MuiTabs-indicator': {
+                "& .MuiTabs-indicator": {
                     backgroundColor: string;
                 };
-                '& .Mui-selected': {
+                "& .Mui-selected": {
                     color: string;
                 };
             };
@@ -272,7 +272,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
         styleOverrides: {
             root: {
                 borderColor: string;
-                '&.MuiTableCell-head': {
+                "&.MuiTableCell-head": {
                     fontSize: string;
                     color: string;
                     fontWeight: number;
@@ -316,7 +316,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
         styleOverrides: {
             root: {
                 border: string;
-                '& .MuiFormControl-root>.MuiInputBase-root': {
+                "& .MuiFormControl-root>.MuiInputBase-root": {
                     backgroundColor: string;
                     borderColor: string;
                 };
@@ -342,14 +342,14 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
                 border: string;
                 paddingLeft: number;
                 paddingRight: number;
-                '&.MuiDataGrid-cell--withRenderer > div ': {
-                    ' > .high': {
+                "&.MuiDataGrid-cell--withRenderer > div ": {
+                    " > .high": {
                         backgroundColor: string;
                     };
-                    '& > .medium': {
+                    "& > .medium": {
                         backgroundColor: string;
                     };
-                    '& > .low': {
+                    "& > .low": {
                         backgroundColor: string;
                     };
                     color: string;
