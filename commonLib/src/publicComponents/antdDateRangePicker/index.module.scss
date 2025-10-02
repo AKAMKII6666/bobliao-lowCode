@@ -1,33 +1,33 @@
 .datePickerModify {
-	border: 1px solid #c4c4c4;
+	/* border: 1px solid #c4c4c4; */
 	margin-left: 16px;
 	transition: none;
 	border-radius: 8px;
-	&:hover {
+	/* &:hover {
 		border: 1px solid #616161;
-	}
+	} */
 
-	[class*='ant-picker-input'] > input {
-		color: #212121;
+	[class*="ant-picker-input"] > input {
+		/* color: #212121; */
 		font-weight: 500;
 		font-size: 14px;
-		font-family: 'Roboto', sans-serif;
+		font-family: "Roboto", sans-serif;
 	}
 
-	&[class*='ant-picker-focused'] {
+	&[class*="ant-picker-focused"] {
 		margin-left: 15px;
-		border: 2px solid #04886b;
+		/* border: 2px solid #04886b; */
 		box-shadow: none;
 	}
 
 	&:focus {
 		margin-left: 15px;
-		border: 2px solid #04886b;
+		/* border: 2px solid #04886b; */
 		box-shadow: none;
 	}
 
-	[class*='ant-picker-input'] > input::placeholder {
-		color: #9e9e9e;
+	[class*="ant-picker-input"] > input::placeholder {
+		/* color: #9e9e9e; */
 		font-size: 0.875rem;
 		opacity: 0.42;
 	}

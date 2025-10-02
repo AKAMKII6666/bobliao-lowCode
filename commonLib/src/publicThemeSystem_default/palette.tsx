@@ -10,6 +10,7 @@ import theme3 from "./scss/_theme3.module.scss";
 import theme4 from "./scss/_theme4.module.scss";
 import theme5 from "./scss/_theme5.module.scss";
 import theme6 from "./scss/_theme6.module.scss";
+import theme7 from "./scss/_theme7.module.scss"; // 添加 theme7 导入
 
 /* 直接忽略这里的ts错误 */
 // @ts-ignore
@@ -37,6 +38,9 @@ const Palette = (navType: PaletteMode, presetColor: string) => {
 			break;
 		case "theme6":
 			colors = theme6;
+			break;
+		case "theme7": // 添加 theme7 支持
+			colors = theme7;
 			break;
 		case "default":
 		default:

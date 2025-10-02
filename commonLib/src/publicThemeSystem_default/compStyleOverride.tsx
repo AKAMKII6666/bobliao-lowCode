@@ -3,11 +3,23 @@ import { Theme } from "@mui/material/styles";
 
 export default function componentStyleOverrides(theme: Theme, borderRadius: number, outlinedFilled: boolean) {
 	const mode = theme.palette.mode;
-	/* 直接忽略这里的ts错误 */
+
+	// 暗色模式适配的背景色
 	// @ts-ignore
+
+	// @ts-ignore
+
 	const bgColor = mode === "dark" ? theme.palette.dark[800] : theme.palette.grey[50];
-	const menuSelectedBack = mode === "dark" ? theme.palette.secondary.main + 15 : theme.palette.secondary.light;
-	const menuSelected = mode === "dark" ? theme.palette.secondary.main : theme.palette.secondary.dark;
+	// @ts-ignore
+
+	const inputBgColor = mode === "dark" ? theme.palette.darkLevel2 : theme.palette.grey[50];
+
+	// 统一的边框颜色标准 - 暗色模式适配
+	// @ts-ignore
+
+	const defaultBorderColor = mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider;
+	const hoverBorderColor = theme.palette.primary.main;
+	const focusBorderColor = theme.palette.primary.dark;
 
 	return {
 		MuiButton: {
@@ -15,6 +27,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 				root: {
 					fontWeight: 500,
 					borderRadius: "4px",
+					"&:hover": {
+						backgroundColor: theme.palette.primary.main, // 使用主色背景
+						color: theme.palette.primary.contrastText,
+					},
 				},
 			},
 		},
@@ -75,20 +91,20 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 					paddingTop: "10px",
 					paddingBottom: "10px",
 					"&.Mui-selected": {
-						color: menuSelected,
-						backgroundColor: menuSelectedBack,
+						color: theme.palette.secondary.main, // 使用主色
+						backgroundColor: theme.palette.secondary.light, // 使用次要背景
 						"&:hover": {
-							backgroundColor: menuSelectedBack,
+							backgroundColor: theme.palette.secondary.light,
 						},
 						"& .MuiListItemIcon-root": {
-							color: menuSelected,
+							color: theme.palette.secondary.main, // 使用主色
 						},
 					},
 					"&:hover": {
-						backgroundColor: menuSelectedBack,
-						color: menuSelected,
+						backgroundColor: theme.palette.secondary.light,
+						color: theme.palette.secondary.main, // 使用主色
 						"& .MuiListItemIcon-root": {
-							color: menuSelected,
+							color: theme.palette.secondary.main, // 使用主色
 						},
 					},
 				},
@@ -127,13 +143,17 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 		MuiOutlinedInput: {
 			styleOverrides: {
 				root: {
-					background: outlinedFilled ? bgColor : "transparent",
+					background: outlinedFilled ? inputBgColor : "transparent",
 					borderRadius: `${borderRadius}px`,
 					"& .MuiOutlinedInput-notchedOutline": {
-						borderColor: mode === "dark" ? theme.palette.text.primary + 28 : theme.palette.grey[400],
+						borderColor: defaultBorderColor,
 					},
 					"&:hover $notchedOutline": {
-						borderColor: theme.palette.primary.light,
+						borderColor: hoverBorderColor,
+					},
+					"&.Mui-focused $notchedOutline": {
+						borderColor: focusBorderColor,
+						borderWidth: 2,
 					},
 					"&.MuiInputBase-multiline": {
 						padding: 1,
@@ -141,7 +161,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 				},
 				input: {
 					fontWeight: 500,
-					background: outlinedFilled ? bgColor : "transparent",
+					background: outlinedFilled ? inputBgColor : "transparent",
 					padding: "15.5px 14px",
 					borderRadius: `${borderRadius}px`,
 					"&.MuiInputBase-inputSizeSmall": {
@@ -163,7 +183,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 			styleOverrides: {
 				root: {
 					"&.Mui-disabled": {
-						color: mode === "dark" ? theme.palette.text.primary + 50 : theme.palette.grey[300],
+						color: mode === "dark" ? theme.palette.text.primary + 50 : theme.palette.text.secondary,
 					},
 				},
 				mark: {
@@ -181,17 +201,33 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 					"& .MuiAutocomplete-tag": {
 						background: mode === "dark" ? theme.palette.text.primary + 20 : theme.palette.secondary.light,
 						borderRadius: 4,
-						/* 直接忽略这里的ts错误 */
-						// @ts-ignore
-						color: theme.palette.text.dark,
+						//@ts-ignore
+						color: mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.text.dark,
 						".MuiChip-deleteIcon": {
-							color: mode === "dark" ? theme.palette.text.primary + 80 : theme.palette.secondary[200],
+							color: mode === "dark" ? theme.palette.text.primary + 80 : theme.palette.secondary.light,
+						},
+					},
+					// 添加输入框样式
+					"& .MuiOutlinedInput-root": {
+						backgroundColor: inputBgColor,
+						"& .MuiOutlinedInput-notchedOutline": {
+							borderColor: defaultBorderColor,
+						},
+						"&:hover .MuiOutlinedInput-notchedOutline": {
+							borderColor: hoverBorderColor,
+						},
+						"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+							borderColor: focusBorderColor,
+							borderWidth: 2,
 						},
 					},
 				},
 				popper: {
 					borderRadius: `${borderRadius}px`,
-					boxShadow: "0px 8px 10px -5px rgb(0 0 0 / 20%), 0px 16px 24px 2px rgb(0 0 0 / 14%), 0px 6px 30px 5px rgb(0 0 0 / 12%)",
+					boxShadow:
+						mode === "dark"
+							? "0 4px 12px rgba(0, 0, 0, 0.4)"
+							: "0px 8px 10px -5px rgb(0 0 0 / 20%), 0px 16px 24px 2px rgb(0 0 0 / 14%), 0px 6px 30px 5px rgb(0 0 0 / 12%)",
 				},
 			},
 		},
@@ -205,9 +241,21 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 		},
 		MuiSelect: {
 			styleOverrides: {
-				select: {
-					"&:focus": {
-						backgroundColor: "transparent",
+				root: {
+					"& .MuiOutlinedInput-notchedOutline": {
+						borderColor: defaultBorderColor,
+					},
+					"&:hover .MuiOutlinedInput-notchedOutline": {
+						borderColor: hoverBorderColor, // 使用更重的主色
+					},
+					"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+						borderColor: focusBorderColor, // 使用深色
+						borderWidth: 2,
+					},
+					select: {
+						"&:focus": {
+							backgroundColor: "transparent",
+						},
 					},
 				},
 			},
@@ -227,6 +275,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 				root: {
 					"&.MuiChip-deletable .MuiChip-deleteIcon": {
 						color: "inherit",
+					},
+					"&:hover": {
+						backgroundColor: theme.palette.primary.main, // 使用主色背景
+						color: theme.palette.primary.contrastText,
 					},
 				},
 			},
@@ -263,10 +315,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 					// @ts-ignore
 					backgroundColor: mode === "dark" ? theme.palette.dark[900] : theme.palette.primary.light,
 					"& .MuiTabs-flexContainer": {
-						borderColor: mode === "dark" ? theme.palette.text.primary + 20 : theme.palette.primary[200],
+						borderColor: mode === "dark" ? theme.palette.text.primary + 20 : theme.palette.primary.light,
 					},
 					"& .MuiTab-root": {
-						color: mode === "dark" ? theme.palette.text.secondary : theme.palette.grey[900],
+						color: mode === "dark" ? theme.palette.text.secondary : theme.palette.text.primary,
 					},
 					"& .MuiTabs-indicator": {
 						backgroundColor: theme.palette.primary.dark,
@@ -281,7 +333,7 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 			styleOverrides: {
 				flexContainer: {
 					borderBottom: "1px solid",
-					borderColor: mode === "dark" ? theme.palette.text.primary + 20 : theme.palette.grey[200],
+					borderColor: theme.palette.divider, // 使用主题的divider颜色
 				},
 			},
 		},
@@ -295,10 +347,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 		MuiTableCell: {
 			styleOverrides: {
 				root: {
-					borderColor: mode === "dark" ? theme.palette.text.primary + 15 : theme.palette.grey[200],
+					borderColor: theme.palette.divider, // 统一使用divider颜色
 					"&.MuiTableCell-head": {
 						fontSize: "0.875rem",
-						color: mode === "dark" ? theme.palette.grey[600] : theme.palette.grey[900],
+						color: mode === "dark" ? theme.palette.text.secondary : theme.palette.text.primary,
 						fontWeight: 500,
 					},
 				},
@@ -341,18 +393,27 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 				root: {
 					border: "none",
 					"& .MuiFormControl-root>.MuiInputBase-root": {
-						backgroundColor: theme.palette.background.default + " !important",
-						borderColor: theme.palette.mode === "dark" ? theme.palette.divider + 20 + " !important" : theme.palette.divider + " !important",
+						// @ts-ignore
+						backgroundColor: mode === "dark" ? theme.palette.darkLevel2 : theme.palette.background.default,
+						// @ts-ignore
+
+						borderColor: mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider,
 					},
 				},
 				row: {
-					borderBottom: `1px solid ${mode === "dark" ? theme.palette.divider + 20 : theme.palette.divider}`,
+					// @ts-ignore
+
+					borderBottom: `1px solid ${mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider}`,
 				},
 				columnHeader: {
-					color: theme.palette.grey[600],
+					// @ts-ignore
+
+					color: mode === "dark" ? theme.palette.darkTextSecondary : theme.palette.text.secondary,
 					paddingLeft: 24,
 					paddingRight: 24,
-					borderBottom: `1px solid ${mode === "dark" ? theme.palette.divider + 20 : theme.palette.divider}`,
+					// @ts-ignore
+
+					borderBottom: `1px solid ${mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider}`,
 				},
 				columnHeaderCheckbox: {
 					paddingLeft: 0,
@@ -368,7 +429,8 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 					paddingRight: 24,
 					"&.MuiDataGrid-cell--withRenderer > div ": {
 						...(theme.palette.mode === "dark" && {
-							color: theme.palette.grey[50],
+							// @ts-ignore
+							color: theme.palette.darkTextPrimary,
 						}),
 						" > .high": {
 							backgroundColor: theme.palette.mode === "dark" ? theme.palette.success.dark : theme.palette.success.light,
@@ -382,13 +444,47 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 					},
 				},
 				columnsContainer: {
-					borderColor: mode === "dark" ? theme.palette.divider + 20 : theme.palette.divider,
+					// @ts-ignore
+
+					borderColor: mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider,
 				},
 				columnSeparator: {
-					borderColor: mode === "dark" ? theme.palette.divider + 20 : theme.palette.divider,
+					// @ts-ignore
+
+					borderColor: mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider,
 				},
 				withBorderColor: {
-					borderColor: mode === "dark" ? theme.palette.divider + 20 : theme.palette.divider,
+					// @ts-ignore
+
+					borderColor: mode === "dark" ? theme.palette.darkTextPrimary : theme.palette.divider,
+				},
+			},
+		},
+		MuiTextField: {
+			styleOverrides: {
+				root: {
+					"& .MuiOutlinedInput-root": {
+						"& .MuiOutlinedInput-notchedOutline": {
+							borderColor: defaultBorderColor,
+						},
+						"&:hover .MuiOutlinedInput-notchedOutline": {
+							borderColor: hoverBorderColor, // 使用更重的主色
+						},
+						"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+							borderColor: focusBorderColor, // 使用深色
+							borderWidth: 2,
+						},
+					},
+				},
+			},
+		},
+		MuiIconButton: {
+			styleOverrides: {
+				root: {
+					"&:hover": {
+						backgroundColor: theme.palette.primary.main, // 使用主色背景
+						color: theme.palette.primary.contrastText,
+					},
 				},
 			},
 		},
