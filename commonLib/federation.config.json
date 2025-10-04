@@ -49,7 +49,9 @@
 		"./utils/utils": "./src/utils/utils",
 		"./utils/globalMenuHook": "./src/utils/globalMenuHook",
 		"./publicThemeSystem": "./src/publicThemeSystem/index",
+		"./useConfig": "./src/publicThemeSystem/useConfig.ts",
 		"./publicThemeSystem_default": "./src/publicThemeSystem_default/index",
-		"./useConfig": "./src/publicThemeSystem/useConfig.ts"
+		"./publicThemeSystem_default_useConfig": "./src/publicThemeSystem_default/useConfig.ts",
+		"./publicThemeSystem_default_BerryConfigProvider": "./src/publicThemeSystem_default/ConfigContext.tsx"
 	}
 }

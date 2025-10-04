@@ -12,6 +12,7 @@ import Typography from "./typography";
 
 import componentStyleOverrides from "./compStyleOverride";
 import customShadows from "./shadows";
+import { ConfigProvider as BerryConfigProvider } from "./ConfigContext";
 
 // types
 import { CustomShadowProps } from "types/default-theme";

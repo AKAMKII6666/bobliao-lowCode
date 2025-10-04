@@ -9,6 +9,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
                     backgroundColor: string;
                     color: string;
                 };
+                "&.MuiButton-text:hover": {
+                    backgroundColor: string;
+                    color: string;
+                };
             };
         };
     };

@@ -31,6 +31,10 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
 						backgroundColor: theme.palette.primary.main, // 使用主色背景
 						color: theme.palette.primary.contrastText,
 					},
+					"&.MuiButton-text:hover": {
+						backgroundColor: "transparent", // 禁用 hover 背景颜色
+						color: theme.palette.primary.dark,
+					},
 				},
 			},
 		},
