@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
 				: path.resolve(__dirname, "../dist"), // 生产环境输出路径
 			publicPath: isDev
 				? "http://localhost:2203/" // DevServer 地址
-				: "https://main.bobliaocommonlib.pages.dev/", // 生产环境使用相对路径或 CDN 路径
+				: "https://stylesystemupdate.bobliaocommonlib.pages.dev/", // 生产环境使用相对路径或 CDN 路径
 			filename: isDev
 				? "bundle.js" // 开发环境下简单文件名
 				: "[id]_[name]_[contenthash].rl.js", // 生产环境下带内容哈希的文件名

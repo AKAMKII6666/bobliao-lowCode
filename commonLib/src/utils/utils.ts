@@ -212,10 +212,15 @@ export const OSS_UrlHead = "https://static-file-source.oss-cn-beijing.aliyuncs.c
 /* 查询参数布局时Grid使用的公共尺寸 */
 export const inqueryItemGridSize_public = {
 	item: true,
+	//超大屏
 	xl: 4,
+	//大屏
 	lg: 6,
+	//中屏
 	md: 6,
+	//小屏
 	sm: 12,
+	//超小屏
 	xs: 12,
 };
 export const titleGridP_layout: GridProps = {
@@ -291,4 +296,11 @@ export const ellipsisText = function (text: string, maxLength: number): string {
 		return text;
 	}
 	return text.slice(0, maxLength) + "...";
+};
+
+//获得当前是横屏还是竖屏
+export const getIsHorizontal = function () {
+	const width = window.innerWidth;
+	const height = window.innerHeight;
+	return width > height;
 };

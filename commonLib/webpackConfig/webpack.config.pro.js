@@ -33,7 +33,7 @@ var devConfig = {
 		library: {
 			type: "commonjs2",
 		},
-		publicPath: "https://static-unzip-file-source.oss-cn-beijing.aliyuncs.com/prod/SWYTStaticFiles/NewFarmerSport/0.0.7/dist/",
+		publicPath: "https://stylesystemupdate.bobliaocommonlib.pages.dev/",
 	},
 	optimization: {
 		chunkIds: "named",

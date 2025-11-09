@@ -179,7 +179,9 @@ const PublicInqueryContainer: FC<IPublicInqueryContainerprops> = ({
 								if (index < foldShowCount) {
 									let _propItem = appendProps({ ...item });
 									//折叠时仅显示两个组件
-									_propItem.comGridProps = { item: true, xs: 6 };
+									//超小屏的时候组件独占一列
+									//中屏以上的时候组件占两列
+									_propItem.comGridProps = { item: true, xs: 12, md: 6 };
 									delete _propItem.children;
 									/* 使用组件公用容器装载组件并绑定数据 */
 									acc.push(

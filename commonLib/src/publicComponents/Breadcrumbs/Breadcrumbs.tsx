@@ -17,6 +17,7 @@ import HomeTwoToneIcon from "@mui/icons-material/HomeTwoTone";
 import { NavItemType, OverrideIcon } from "types";
 import { IMenuDataItem, IMenuTreeData, useGlobalMenuDataContext } from "../../utils/globalMenuHook";
 import useLocalStorage from "use-local-storage";
+import { getIsHorizontal } from "renderer/utils/utils";
 
 interface BreadcrumbLinkProps {
 	title: string;
@@ -104,6 +105,9 @@ interface Props {
 
 	/** 用于从 localStorage 中读取菜单树数据的 key 名 */
 	menuStroageName: string;
+
+	/**是否在默认页显示此组件 */
+	shouUpOndefaultPage?: boolean;
 }
 
 //往外面暴露统一名称的属性对象，用于生成低代码平台属性JSON schema
@@ -125,6 +129,7 @@ const Breadcrumbs = ({
 	sx, // 样式
 	fixedTop = false, // 是否固定顶部
 	menuStroageName, // 存储菜单结构的 localStorage key
+	shouUpOndefaultPage = true, // 是否在默认页显示此组件
 	...others // 透传给 Card 的其他属性
 }: Props) => {
 	const theme = useTheme();
@@ -164,10 +169,12 @@ const Breadcrumbs = ({
 			return;
 		}
 		menuTree.data?.map((menu: IMenuDataItem) => {
-			if (customLocation.indexOf(menu.frontPath) === 0 && menu.frontPath !== "/") {
+			/**如果当前路由是默认页，并且不显示默认页，那就直接返回 */
+			if (customLocation.indexOf(menu.frontPath) === 0 && menu.frontPath !== "/" && !shouUpOndefaultPage) {
 				setMain(menu);
 				setItem(menu);
 			} else {
+				/**否则就查找当前路由对应的菜单项目 */
 				let res = getCollapse(menu);
 				if (res !== false) {
 					result = res;
@@ -275,11 +282,12 @@ const Breadcrumbs = ({
 								transition: "all 0.3s ease-in-out",
 								position: "fixed",
 								top: "68px",
-								left: "260px",
+								left: getIsHorizontal() ? "260px" : "0px",
 								right: 0,
 								zIndex: 5,
 								borderRadius: "0px",
 								backgroundColor: "rgb(250 250 250 / 95%)",
+								width: getIsHorizontal() ? "auto" : "100%",
 							};
 						}
 						return { transition: "all 0.3s ease-in-out" };

@@ -251,7 +251,6 @@ export const useGlobalMenuDataHook = function ({
 
 	/* 路由改动时自动查找到当前页面 */
 	const routerChange = function () {
-		debugger;
 		if (location.pathname === "/building") {
 			return;
 		}

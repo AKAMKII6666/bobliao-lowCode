@@ -35,4 +35,5 @@ export declare const MAP_ColorGroup: string[];
 export declare const convertToNumber: (Obj: any, name: string) => any;
 export declare const isEmpty: (obj: any) => boolean;
 export declare const ellipsisText: (text: string, maxLength: number) => string;
+export declare const getIsHorizontal: () => boolean;
 //# sourceMappingURL=utils.d.ts.map

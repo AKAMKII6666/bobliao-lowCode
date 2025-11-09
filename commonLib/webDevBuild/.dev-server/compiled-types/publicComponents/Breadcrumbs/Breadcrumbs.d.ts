@@ -43,8 +43,10 @@ interface Props {
     fixedTop?: boolean;
     /** 用于从 localStorage 中读取菜单树数据的 key 名 */
     menuStroageName: string;
+    /**是否在默认页显示此组件 */
+    shouUpOndefaultPage?: boolean;
 }
 export type Tinputprops = Props;
-declare const Breadcrumbs: ({ card, custom, divider, heading, icon, icons, links, maxItems, rightAlign, separator, title, titleBottom, sx, fixedTop, menuStroageName, ...others }: Props) => ReactElement<unknown, string | import("react").JSXElementConstructor<any>>;
+declare const Breadcrumbs: ({ card, custom, divider, heading, icon, icons, links, maxItems, rightAlign, separator, title, titleBottom, sx, fixedTop, menuStroageName, shouUpOndefaultPage, ...others }: Props) => ReactElement<unknown, string | import("react").JSXElementConstructor<any>>;
 export default Breadcrumbs;
 //# sourceMappingURL=Breadcrumbs.d.ts.map
