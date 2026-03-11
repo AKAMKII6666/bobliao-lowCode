@@ -188,9 +188,6 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 
 		// 立即创建拖拽预览
 		createDragPreview(e.clientX, e.clientY);
-
-		// 添加调试信息
-		console.log("拖拽开始，创建预览:", node.name, e.clientX, e.clientY);
 	};
 
 	/**
@@ -243,13 +240,11 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 			if (element) {
 				element.style.left = `${e.clientX + 10}px`;
 				element.style.top = `${e.clientY - 10}px`;
-				console.log("鼠标移动，更新预览位置:", e.clientX, e.clientY);
 			}
 		};
 
 		// 添加鼠标抬起监听器到透明层
 		const handleMouseUp = () => {
-			console.log("透明层鼠标抬起，清理拖拽预览");
 			cleanupDragPreview();
 
 			// 清理拖拽状态
@@ -301,8 +296,6 @@ const TreeNodeItem: FC<ITreeNodeItemProps> = ({ node, level, path, isExpanded, o
 		};
 
 		renderData.dragPreviewCleanupRef.current = cleanup;
-
-		console.log("拖拽预览和透明层创建成功");
 	};
 
 	/**

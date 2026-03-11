@@ -964,7 +964,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 		function (): ReturnType<React.EffectCallback> {
 			if (isMounted && saveTreeCommandStamp !== -1) {
 				saveDebounce(function () {
-					console.log("已经储存");
 					emitAndSaveTree();
 				}, 300);
 			}

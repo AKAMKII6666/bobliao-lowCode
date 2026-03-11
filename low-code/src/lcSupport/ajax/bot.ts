@@ -36,7 +36,6 @@ ${content}
 			function readStream() {
 				return reader.read().then(({ done, value }) => {
 					if (done) {
-						console.log("完整流式响应:", fullResponse);
 						doneCallBack();
 						return;
 					}
@@ -55,12 +54,10 @@ ${content}
 								// 修改这里：使用 text 字段而不是 delta.content
 								if (parsed.choices && parsed.choices[0] && parsed.choices[0].text) {
 									fullResponse += parsed.choices[0].text;
-									console.log("当前完整响应:", fullResponse);
-
 									resCallBack(fullResponse);
 								}
 							} catch (e) {
-								console.log("解析错误:", data);
+								console.error("解析错误:", data);
 							}
 						}
 					}
@@ -146,7 +143,6 @@ export const Api_generateLayoutWithChatGPT = async (
 			function readStream() {
 				return reader.read().then(({ done, value }) => {
 					if (done) {
-						console.log("DeepSeek完整流式响应:", fullResponse);
 						doneCallBack();
 						return;
 					}
@@ -158,7 +154,6 @@ export const Api_generateLayoutWithChatGPT = async (
 						if (line.startsWith("data: ")) {
 							const data = line.slice(6);
 							if (data === "[DONE]") {
-								console.log("DeepSeek完整流式响应:", fullResponse);
 								doneCallBack();
 								return;
 							}
@@ -166,11 +161,10 @@ export const Api_generateLayoutWithChatGPT = async (
 								const parsed = JSON.parse(data);
 								if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
 									fullResponse += parsed.choices[0].delta.content;
-									console.log("DeepSeek当前完整响应:", fullResponse);
 									resCallBack(fullResponse);
 								}
 							} catch (e) {
-								console.log("DeepSeek解析错误:", data);
+								console.error("DeepSeek解析错误:", data);
 							}
 						}
 					}
@@ -184,7 +178,6 @@ export const Api_generateLayoutWithChatGPT = async (
 		.catch((error) => {
 			console.error("DeepSeek流式请求错误:", error);
 			// 如果DeepSeek API失败，回退到本地API
-			console.log("回退到本地API...");
 			Api_generateLayout(content, resCallBack, doneCallBack);
 			doneCallBack();
 		});
@@ -250,16 +243,13 @@ export const Api_generateLayoutWithChatGPTSync = async (
 		const data = await response.json();
 
 		if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-			console.log("DeepSeek同步响应:", data.choices[0].message.content);
 			return data.choices[0].message.content;
 		} else {
 			throw new Error("DeepSeek API响应格式错误");
 		}
 	} catch (error) {
 		console.error("DeepSeek同步请求错误:", error);
-		// 如果DeepSeek API失败，回退到本地API
-		console.log("回退到本地API...");
-		throw error; // 让调用者处理错误
+		throw error;
 	}
 };
 

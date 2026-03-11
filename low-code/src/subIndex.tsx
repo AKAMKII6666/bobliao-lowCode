@@ -52,4 +52,4 @@ root.render(
 	</>
 );
 
-console.log("!------------>host React.version:", react.version);
+// React version logged for debugging purposes

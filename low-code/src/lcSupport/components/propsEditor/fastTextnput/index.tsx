@@ -327,7 +327,6 @@ const FastTextInput = forwardRef<IFastTextInputRef, IFastTextInputProps>(
 										acc.push(item);
 									}
 								} catch (_e) {
-									console.log(item);
 									console.error("Error processing completeTexts:", _e);
 								}
 								return acc;
