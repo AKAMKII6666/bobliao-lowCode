@@ -51,7 +51,7 @@ export interface ITreeNode {
 	//组件中文名称
 	label: string;
 	//组件自身配置
-	props: any;
+	props: Record<string, unknown>;
 	//用于配置autoForm Item时的配置
 	autoFormItemProps?: Partial<IAutoFormItemProps>;
 	commonInqueryItemProps?: Partial<ICommonInqueryitempropsWithoutYup>;
