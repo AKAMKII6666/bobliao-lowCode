@@ -619,8 +619,8 @@ export const useRendererDataHook = function () {
 		但是这些属性并不保存至组件树里去,只是在渲染时临时添加进去
 		当再次重新渲染时还会再次过一遍这里的逻辑
 	 */
-	const getNodeTempProps = function (node: ITreeNode, isForEditor?: boolean, handleFunction?: (node: ITreeNode, name: string) => any) {
-		let newProps: any = null;
+	const getNodeTempProps = function (node: ITreeNode, isForEditor?: boolean, handleFunction?: (node: ITreeNode, name: string) => Record<string, any> | null) {
+		let newProps: Record<string, any> | null = null;
 		//如果不是给编辑器的渲染方式
 		//那就填充默认可用的参数即可
 		if (typeof isForEditor === "undefined" || isForEditor === false) {
@@ -634,7 +634,7 @@ export const useRendererDataHook = function () {
 						/* 处理每个子组件 */
 						for (let item of node.children) {
 							//给每个子组件填充autoform的项目的属性
-							let resitem: any = {
+							let resitem: Record<string, any> = {
 								...{
 									//组件类型
 									comType: item.name as any,
@@ -669,7 +669,7 @@ export const useRendererDataHook = function () {
 						/* 处理每个子组件 */
 						for (let item of node.children) {
 							//给每个子组件填充commonInquery的项目的属性
-							let resitem: any = {
+							let resitem: Record<string, any> = {
 								...{
 									//组件类型
 									comType: item.name as any,
@@ -698,7 +698,7 @@ export const useRendererDataHook = function () {
 			let cProps: MithrilAntdTableComponentProps = structuredClone(node.props) as MithrilAntdTableComponentProps;
 			if (typeof cProps.dataSource === "undefined" || cProps.dataSource.length === 0) {
 				cProps.dataSource = listFakeData;
-				cProps.rowKey = (record: any) => record.code;
+				cProps.rowKey = (record: Record<string, any>) => record.code;
 			}
 			newProps = cProps;
 		}
