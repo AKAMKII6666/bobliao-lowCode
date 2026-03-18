@@ -79,7 +79,7 @@ const HtmlDivprops = {
 };
 
 /* 属性面板组件属性定义 */
-export const componentsPropsDefine: any = {
+export const componentsPropsDefine: Record<string, any> = {
 	PageRoot: {
 		style: cssStyleDefine,
 		className: makeStringNode([""], "样式绑定", "样式绑定"),
