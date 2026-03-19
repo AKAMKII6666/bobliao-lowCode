@@ -95,7 +95,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 
 	//===============ref======================
 	/* 生成代码时的组件引用字符串列表 */
-	const genCodeDepsStringRef = useRef<any>({});
+	const genCodeDepsStringRef = useRef<Record<string, string>>({});
 
 	//===============function=================
 	//如果有外部传进来的默认树，则加载它
