@@ -528,7 +528,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * @param newProps 要合并的 props（partial 更新）
 	 * @returns 是否修改成功
 	 */
-	const modifyNodeProps = (propName: string, nodePath: number[], newProps: any): boolean => {
+	const modifyNodeProps = (propName: string, nodePath: number[], newProps: Record<string, unknown>): boolean => {
 		if (!Array.isArray(nodePath) || nodePath.length === 0) {
 			console.warn("非法路径，无法修改根节点或空路径");
 			return false;
@@ -672,7 +672,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 			当再次重新渲染时还会再次过一遍这里的逻辑
 		 */
 	const getNodeTempProps = function (node: ITreeNode) {
-		let newProps: any = null;
+		let newProps: Record<string, unknown> | null = null;
 
 		if (node.nodetype === "layout" && node.name === "AutoForm") {
 			let cProps: IAutoFormProps = structuredClone(node.props) as IAutoFormProps;
