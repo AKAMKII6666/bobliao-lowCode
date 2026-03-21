@@ -9,7 +9,7 @@ import React, { createContext, useState, useContext, useEffect, ReactElement, FC
 import useRenderTreeHook from "../renderTreeController/renderTreeHook";
 import { ICommonInqueryitempropsWithoutYup, ITreeNode, TNodeType } from "../interface/ItreeNode";
 import { ComponentNameMap } from "../lcsUtils";
-import { coordXY, IchatItem, IcollectingItem, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
+import { coordXY, IchatItem, IcollectingItem, IFakeDataItem, TEditorMode, TMouseAction, warpperDivObj } from "../interface/renderer";
 import { Immer, produce } from "immer";
 import { newGuid } from "MithalCommonLibrary/utils/utils";
 import useJquery from "@bobliao/use-jquery-hook";
@@ -136,7 +136,7 @@ export const useRendererDataHook = function () {
 	const [isopenCodeWindow, setisopenCodeWindow] = useState<boolean>(false);
 
 	/* antdtable的假数据 */
-	const [listFakeData, setlistFakeData] = useState<any>([
+	const [listFakeData, setlistFakeData] = useState<IFakeDataItem[]>([
 		{
 			code: 1,
 			name: "示例名称",

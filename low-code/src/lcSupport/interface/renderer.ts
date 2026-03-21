@@ -32,6 +32,18 @@ export interface IcollectingItem {
 	classes: string;
 }
 
+/* antd table 假数据项 */
+export interface IFakeDataItem {
+	code: number;
+	name: string;
+	value: string;
+	area: string;
+	landType: string;
+	statusTypeId: string;
+	createByTime: string;
+	lastContractor: string;
+}
+
 /* 用户和机器人聊天的对话项 */
 export interface IchatItem {
 	/* 用户发言 */
