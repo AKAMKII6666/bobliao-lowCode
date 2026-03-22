@@ -771,8 +771,9 @@ export const useRendererDataHook = function () {
 		const result: string[] = [];
 
 		// 遍历所有样式表
-		for (const sheet of (document as any).styleSheets) {
-			let rules: CSSRuleList;
+		const styleSheets = document.styleSheets;
+		for (const sheet of styleSheets) {
+			let rules: CSSRuleList | null;
 
 			try {
 				rules = sheet.cssRules;
@@ -781,14 +782,17 @@ export const useRendererDataHook = function () {
 				continue;
 			}
 
-			for (const rule of rules as any) {
+			if (!rules) continue;
+
+			for (const rule of rules) {
 				if (rule.type === CSSRule.STYLE_RULE) {
-					const selector = (rule as CSSStyleRule).selectorText;
+					const styleRule = rule as CSSStyleRule;
+					const selector = styleRule.selectorText;
 
 					// 检查是否匹配我们关心的类名
 					for (const cls of classNames) {
 						if (selector.includes(`.${cls}`)) {
-							result.push(rule.cssText);
+							result.push(styleRule.cssText);
 						}
 					}
 				}
