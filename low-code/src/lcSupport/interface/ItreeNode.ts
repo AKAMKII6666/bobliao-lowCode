@@ -14,6 +14,38 @@ import { ICommonInqueryitemprops } from "MithalCommonLibrary/CommonInquery";
 export type TNodeType = "layout" | "component" | "temp";
 
 /**
+ * 组件名称类型，用于定义所有可用的组件名称
+ */
+export type TComponentName =
+	| "MainCard"
+	| "div"
+	| "ul"
+	| "li"
+	| "span"
+	| "label"
+	| "input"
+	| "Stack"
+	| "Grid"
+	| "PageRoot"
+	| "Button"
+	| "AntdDateRangePacker"
+	| "SingleDatePicker"
+	| "MithrilAutocomplete"
+	| "AutoForm"
+	| "CustomNumberInput"
+	| "NumberRangeInput"
+	| "MithrilAntdTable"
+	| "MithrilTextArea"
+	| "MithrilYesNoSwitch"
+	| "MithrilInput"
+	| "TextField"
+	| "MithrilSelect"
+	| "CommonInquery"
+	| "Icon"
+	| "IconButton"
+	| "SpecialEcharts";
+
+/**
  * 组件类型 用于在拖拽时筛选可接受的容器用的标识符
  * 	nomoComponent 为普通控件
  * CommonInquery 也是普通组件，但是可以往里面放置 nomoComponent
@@ -47,7 +79,7 @@ export interface ITreeNode {
 	//节点id
 	nodeid: string;
 	//组件名称
-	name: string;
+	name: TComponentName;
 	//组件中文名称
 	label: string;
 	//组件自身配置
