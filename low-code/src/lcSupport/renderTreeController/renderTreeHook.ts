@@ -528,7 +528,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * @param newProps 要合并的 props（partial 更新）
 	 * @returns 是否修改成功
 	 */
-	const modifyNodeProps = (propName: string, nodePath: number[], newProps: any): boolean => {
+	const modifyNodeProps = (propName: string, nodePath: number[], newProps: Record<string, unknown>): boolean => {
 		if (!Array.isArray(nodePath) || nodePath.length === 0) {
 			console.warn("非法路径，无法修改根节点或空路径");
 			return false;
@@ -564,7 +564,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * 并将当前的 renderTree 历史记录保存到 history 中
 	 */
 	const emitAndSaveTree = async (): Promise<void> => {
-		let renderTree: any = await new Promise(function (_res) {
+		let renderTree: ITreeNode = await new Promise(function (_res) {
 			setrenderTree((renderTree) => {
 				_res(renderTree);
 				return renderTree;
@@ -592,7 +592,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * @returns
 	 */
 	const undo = async () => {
-		let rendererTree: any = await new Promise(function (_res) {
+		let rendererTree: ITreeNode = await new Promise(function (_res) {
 			setrenderTree((renderTree) => {
 				_res(renderTree);
 				return renderTree;
@@ -632,14 +632,14 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 * @returns
 	 */
 	const redo = async () => {
-		let rendererTree: any = await new Promise(function (_res) {
+		let rendererTree: ITreeNode = await new Promise(function (_res) {
 			setrenderTree((renderTree) => {
 				_res(renderTree);
 				return renderTree;
 			});
 		});
 
-		let redoStack: any = await new Promise(function (_res) {
+		let redoStack: ITreeNode[] = await new Promise(function (_res) {
 			setRedoStack((redoStack) => {
 				_res(redoStack);
 				return redoStack;
@@ -676,7 +676,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 
 		if (node.nodetype === "layout" && node.name === "AutoForm") {
 			let cProps: IAutoFormProps = structuredClone(node.props) as IAutoFormProps;
-			cProps.formik = "formik" as any;
+			cProps.formik = "formik";
 			/* 给autoForm转换组件列表 */
 			cProps.items = (function () {
 				let autoformItems: IAutoFormItemProps[] = [];
@@ -687,7 +687,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 						let resitem: any = {
 							...{
 								//组件类型
-								comType: item.name as any,
+								comType: item.name,
 								//显示标题
 								label: item.label,
 								//组件自身自己的属性
@@ -723,7 +723,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 						let resitem: any = {
 							...{
 								//组件类型
-								comType: item.name as any,
+								comType: item.name,
 								//显示标题
 								label: item.label,
 								//组件自身自己的属性
@@ -913,7 +913,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	/**
 	 * 格式化当前配置
 	 */
-	const formatconfig = (config: any): string => {
+	const formatconfig = (config: unknown): string => {
 		return JSON.stringify(config, null, 4);
 	};
 
