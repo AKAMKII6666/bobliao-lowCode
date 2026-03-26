@@ -289,7 +289,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 			if (!current) return;
 
 			if (!isDropAllowed(newNode, current)) {
-				console.warn("目标节点不接受该类型组件");
 				return;
 			}
 
@@ -337,7 +336,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 
 			// 判断是否允许插入该类型
 			if (!isDropAllowed(newNode, current)) {
-				console.warn("该容器不允许插入该类型组件");
 				return;
 			}
 
@@ -345,7 +343,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 			const insertAt = isFractional ? insertIndex + 1 : insertIndex;
 
 			if (insertAt > current.children.length) {
-				console.warn("插入索引超出范围");
 				return;
 			}
 
@@ -372,14 +369,12 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 		let path2: number[] | null = Array.isArray(node2) ? node2 : findPathByNodeid(node2);
 
 		if (!path1 || !path2) {
-			console.warn("路径不存在，无法交换");
 			return false;
 		}
 		let _renderTree = await getNewestrenderTree();
 
 		// 检查是否路径等长，且不相等
 		if (path1.length === 0 || path2.length === 0 || path1.toString() === path2.toString()) {
-			console.warn("路径相同或非法");
 			return false;
 		}
 
@@ -493,7 +488,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 		let path: number[] | null = Array.isArray(target) ? target : findPathByNodeid(target);
 
 		if (!path || path.length === 0) {
-			console.warn("非法路径，不能删除根节点或未找到节点");
 			return false;
 		}
 
@@ -530,7 +524,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 	 */
 	const modifyNodeProps = (propName: string, nodePath: number[], newProps: Record<string, unknown>): boolean => {
 		if (!Array.isArray(nodePath) || nodePath.length === 0) {
-			console.warn("非法路径，无法修改根节点或空路径");
 			return false;
 		}
 
@@ -607,7 +600,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 		});
 
 		if (history.length === 0) {
-			console.warn("没有更多历史记录可以撤销");
 			return false;
 		}
 
@@ -647,7 +639,6 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 		});
 
 		if (redoStack.length === 0) {
-			console.warn("没有可以恢复的操作");
 			return false;
 		}
 
