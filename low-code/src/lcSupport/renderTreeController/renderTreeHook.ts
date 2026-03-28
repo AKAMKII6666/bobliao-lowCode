@@ -663,7 +663,7 @@ const useRenderTreeHook = ({ defaultTree }: IuseRenderTreeHookProps) => {
 			当再次重新渲染时还会再次过一遍这里的逻辑
 		 */
 	const getNodeTempProps = function (node: ITreeNode) {
-		let newProps: any = null;
+		let newProps: IAutoFormProps | ICommonInqueryprops | null = null;
 
 		if (node.nodetype === "layout" && node.name === "AutoForm") {
 			let cProps: IAutoFormProps = structuredClone(node.props) as IAutoFormProps;
