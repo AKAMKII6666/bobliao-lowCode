@@ -457,7 +457,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 					let resitem: any = {
 						...{
 							//组件类型
-							comType: item.name as any,
+							comType: item.name,
 							//显示标题
 							label: item.label,
 							//组件自身自己的属性
@@ -501,7 +501,7 @@ const Wrapper: FC<IWrapperProps> = ({ node, pathArray }): ReactElement => {
 					let resitem: any = {
 						...{
 							//组件类型
-							comType: item.name as any,
+							comType: item.name,
 							//显示标题
 							label: item.label.substring(0, 3) + "..",
 							//组件自身自己的属性
